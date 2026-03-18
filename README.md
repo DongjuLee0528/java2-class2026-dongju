@@ -1,6 +1,8 @@
 # java2-class2026-dongju
 # 202430219 이동주
 
+---
+
 ## 3주차 수업 (3월 18일)
 
 ## 1. 프로그래밍 언어의 종류
@@ -226,7 +228,7 @@ javac ./src/파일명.java
 
 - 서로 관련된 클래스들을 계층 구조로 묶어 놓은 것 (폴더 개념)
 - 클래스 이름에 패키지 이름도 포함
-    - 예) `java.lang.System` → `java\lang` 디렉터리의 `System.class`
+  - 예) `java.lang.System` → `java\lang` 디렉터리의 `System.class`
 - 다른 패키지에 동일한 이름의 클래스 존재 가능
 - 필요한 클래스가 속한 패키지만 `import`하여 사용
 - 사용자 정의 패키지 생성 가능
@@ -251,7 +253,7 @@ javac ./src/파일명.java
 - 하나의 소스 파일에 여러 클래스 작성 가능 (단, `public` 클래스는 하나만)
 - 소스 파일 이름 = `public`으로 선언된 클래스 이름 (반드시 동일해야 함)
 - 클래스 파일 하나에는 클래스 하나만 존재
-    - 여러 클래스를 가진 소스를 컴파일하면 클래스마다 별도의 `.class` 파일 생성
+  - 여러 클래스를 가진 소스를 컴파일하면 클래스마다 별도의 `.class` 파일 생성
 
 ### ④ 실행 코드 배포
 
@@ -303,120 +305,116 @@ javac ./src/파일명.java
 
 ---
 
-*강의: Java 프로그래밍 기초*  
-*정리일: 2026-03-18*
+## 2주차 수업 (3월 11일)
 
+## Git 주요 명령어 정리
 
+### 초기 설정
 
-
-## 2주차 수업 (월 11일)
-# Git 주요 명령어 정리
-
-## 초기 설정
-
-### git init
+#### git init
 - 현재 폴더를 Git 저장소로 초기화함
 
-### git clone <주소>
+#### git clone `<주소>`
 - 원격 저장소를 복제하여 로컬에 다운로드함
 
-
 ---
 
-## 상태 확인
+### 상태 확인
 
-### git status
+#### git status
 - 현재 파일 상태 확인 (추적 여부, 변경 여부 등)
 
-### git log
+#### git log
 - 커밋 히스토리 확인
 
-
 ---
 
-## 파일 추가 및 커밋
+### 파일 추가 및 커밋
 
-### git add <파일명>
+#### git add `<파일명>`
 - 특정 파일을 스테이징 영역에 추가
 
-### git add .
+#### git add .
 - 현재 폴더의 모든 변경 파일을 추가
 
-### git commit -m "메시지"
+#### git commit -m "메시지"
 - 스테이징된 파일들을 하나의 버전으로 저장
 
-
 ---
 
-## 원격 저장소 작업
+### 원격 저장소 작업
 
-### git remote add origin <주소>
+#### git remote add origin `<주소>`
 - 원격 저장소 연결
 
-### git push origin <브랜치명>
+#### git push origin `<브랜치명>`
 - 로컬 커밋을 원격 저장소에 업로드
 
-### git pull origin <브랜치명>
+#### git pull origin `<브랜치명>`
 - 원격 저장소 변경사항을 내려받고 병합
 
-
 ---
 
-## 브랜치 관리
+### 브랜치 관리
 
-### git branch
+#### git branch
 - 브랜치 목록 확인
 
-### git branch <브랜치명>
+#### git branch `<브랜치명>`
 - 새로운 브랜치 생성
 
-### git checkout <브랜치명>
+#### git checkout `<브랜치명>`
 - 해당 브랜치로 이동
 
-### git checkout -b <브랜치명>
+#### git checkout -b `<브랜치명>`
 - 브랜치 생성 + 이동 동시에 수행
 
-
 ---
 
-## 병합
+### 병합
 
-### git merge <브랜치명>
+#### git merge `<브랜치명>`
 - 현재 브랜치에 다른 브랜치 내용을 합침
 
+---
+
+### 기타 유용한 명령어
+
+#### git diff
+- 변경된 내용 상세 비교
+
+#### git reset --hard HEAD
+- 마지막 커밋 상태로 완전히 되돌림 (주의)
+
+#### git stash
+- 현재 작업 임시 저장
+
+#### git stash pop
+- 임시 저장한 작업 다시 가져오기
 
 ---
 
-## 기타 유용한 명령어
+## 마크다운 (Markdown)
 
-### git diff
-- 변경된 내용 상세 비교
+> 추후 정리 예정
 
-### git reset --hard HEAD
-- 마지막 커밋 상태로 완전히 되돌림 (주의)
+---
 
-### git stash
-- 현재 작업 임시 저장
-
-### git stash pop
-- 임시 저장한 작업 다시 가져오기
-
-
-#  마크다운
-### 잘 몰라
-...java
+## Java 기본 코드 예제
+```java
 public class Main {
-public static void main(String[] args) {
-//TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-// to see how IntelliJ IDEA suggests fixing it.
-System.out.printf("Hello and welcome!");
+    public static void main(String[] args) {
+        System.out.printf("Hello and welcome!");
 
         for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
             System.out.println("i = " + i);
         }
     }
 }
+```
 
-...
+---
+
+## 1주차 수업
+
+> 내용 없음
