@@ -2,28 +2,818 @@
 # 202430219 이동주
 
 ---
+## 5주차 수업 (4월 1일)
+
+## 1. 비교 연산자
+
+```java
+a < b      // a가 b보다 작으면 true
+a > b      // a가 b보다 크면 true
+a <= b     // a가 b보다 작거나 같으면 true
+a >= b     // a가 b보다 크거나 같으면 true
+a == b     // a가 b와 같으면 true
+a != b     // a가 b와 같지 않으면 true
+```
+
+---
+
+## 2. 논리 연산자
+
+```java
+!a         // a가 true면 false, false면 true
+a ^ b      // XOR (서로 다르면 true, 같으면 false)
+a || b     // OR (둘 중 하나라도 true면 true)
+a && b     // AND (둘 다 true일 때만 true)
+```
+
+---
+
+## 3. 조건 연산자 (삼항 연산자)
+
+- 3개의 피연산자로 구성된 연산자 (ternary)
+- `if-else`를 간결하게 표현 가능
+
+**기본 구조**
+```java
+opr1 ? opr2 : opr3
+// opr1이 true → opr2
+// opr1이 false → opr3
+```
+
+**if-else vs 삼항 연산자 비교**
+```java
+// if-else 방식
+int x = 5;
+int y = 3;
+int big;
+
+if (x > y)
+    big = x;
+else
+    big = y;
+
+// 삼항 연산자 방식
+int big = (x > y) ? x : y;
+```
+
+**코드 예제**
+```java
+public class TernaryOperator29 {
+
+    public static void main(String[] args) {
+        int a = 3, b = 5;
+
+        System.out.println("두 수의 차는 " + ((a > b) ? (a - b) : (b - a)));
+    }
+}
+```
+
+**분석**
+
+| 단계 | 내용 |
+|------|------|
+| `a = 3, b = 5` | a가 b보다 작으므로 `a > b`는 false |
+| `(a > b) ? (a - b) : (b - a)` | false이므로 `b - a = 5 - 3 = 2` 반환 |
+
+**실행 결과**
+```
+두 수의 차는 2
+```
+
+---
+
+## 4. 비트 연산
+
+**비트 기본 개념**
+```java
+byte x = 10;
+// x → 00001010 (1바이트 = 8비트)
+```
+
+**비트 연산 활용 예시**
+
+```java
+// 1. 성능 최적화 - 곱셈/나눗셈 대체
+int x = 5;
+int result = x << 1;  // 5 * 2 = 10
+System.out.println(result);
+```
+```
+10
+```
+
+```java
+// 2. 비트 마스크 - 권한 플래그 설정
+class Permissions {
+    static final int READ = 1;   // 0001
+    static final int WRITE = 2;  // 0010
+    static final int EXEC = 4;   // 0100
+}
+
+int userPermissions = Permissions.READ | Permissions.WRITE; // 0011 (3)
+boolean canWrite = (userPermissions & Permissions.WRITE) != 0;
+System.out.println("Can Write: " + canWrite);
+```
+```
+Can Write: true
+```
+
+```java
+// 3. RGB 색상 데이터 압축
+int red = 255;
+int green = 128;
+int blue = 64;
+int packedData = (red << 16) | (green << 8) | blue;
+```
+
+```java
+// 4. 짝수/홀수 판별
+int num = 10;
+boolean isEven = (num & 1) == 0;
+
+// 5. 부호 바꾸기 (2의 보수)
+int x = 5;
+int negativeX = ~x + 1;
+```
+
+---
+
+## 5. 조건문
+
+### 5-1. 단순 if문
+
+```java
+if (조건식) {
+    // 실행 문장 (조건식이 참인 경우)
+}
+
+// 예제 1
+int n = 10;
+if (n % 2 == 0) {
+    System.out.print(n);
+    System.out.println("은 짝수입니다.");
+}
+
+// 예제 2
+int score = 85;
+if (score >= 80 && score <= 89)
+    System.out.println("학점은 B입니다.");
+```
+
+### 5-2. if-else 문
+
+```java
+if (조건식) {
+    // 실행 문장1 (참인 경우)
+} else {
+    // 실행 문장2 (거짓인 경우)
+}
+
+// 예제
+int score2 = 90;
+if (score2 >= 90) {
+    System.out.println("합격입니다.");
+} else {
+    System.out.println("불합격입니다.");
+}
+```
+
+**코드 예제**
+```java
+package week05;
+
+import java.util.Scanner;
+
+public class Ex10 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("나이를 입력하시오:");
+        int age = scanner.nextInt();
+        if ((age >= 20) && (age < 30)) {
+            System.out.println("20대입니다.");
+            System.out.println("20대라서 행복합니다!.");
+        } else {
+            System.out.println("20대가 아닙니다.");
+        }
+        scanner.close();
+    }
+}
+```
+
+**분석**
+
+| 조건 | 내용 |
+|------|------|
+| `age >= 20 && age < 30` | 입력값이 20 이상 30 미만이면 true |
+| true일 때 | "20대입니다." + "20대라서 행복합니다!." 출력 |
+| false일 때 | "20대가 아닙니다." 출력 |
+
+**실행 결과** (입력: `25`)
+```
+나이를 입력하시오:25
+20대입니다.
+20대라서 행복합니다!.
+```
+
+### 5-3. 다중 if-else 문
+
+```java
+if (조건식1) {
+    // 실행 문장1
+} else if (조건식2) {
+    // 실행 문장2
+} else if (조건식3) {
+    // 실행 문장3
+} else {
+    // 앞의 모든 조건이 거짓인 경우
+}
+```
+
+> 조건문이 너무 많은 경우 switch 문 사용 권장. 실행 문장이 실행되면 이후 else 블록은 건너뜀.
+
+---
+
+## 6. switch 문
+
+```java
+switch (식) {
+    case 값1:
+        // 실행 문장1
+        break;
+    case 값2:
+        // 실행 문장2
+        break;
+    default:
+        // 어떤 case와도 같지 않을 때 실행
+}
+```
+
+- `break`를 만나면 switch 문 탈출
+- 일치하는 case가 없으면 `default` 실행
+- `default`는 생략 가능
+
+**예제**
+```java
+char grade = 'B';
+
+switch (grade) {
+    case 'A':
+        System.out.println("축하합니다.");
+        System.out.println("잘했습니다.");
+        break;
+    case 'B':
+        System.out.println("좋아요.");
+        break;
+    case 'C':
+        System.out.println("노력하세요.");
+        break;
+    default:
+        System.out.println("탈락입니다!");
+}
+```
+
+**실행 결과**
+```
+좋아요.
+```
+
+**case 값 허용 범위**
+
+| 허용 | 불허 |
+|------|------|
+| 정수 리터럴 | 실수 리터럴 |
+| 문자 리터럴 | 변수 |
+| 문자열 리터럴 (JDK 1.7+) | 수식 (예: `a > 3`) |
+
+**코드 예제 - 계절 판별**
+```java
+package week05;
+
+import java.util.Scanner;
+
+public class Ex13 {
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("월(1~12)을 입력하시오:");
+        int month = scanner.nextInt();
+
+        switch (month) {
+            case 3:
+            case 4:
+            case 5:
+                System.out.println("봄입니다.");
+                break;
+            case 6:
+            case 7:
+            case 8:
+                System.out.println("여름입니다.");
+                break;
+            case 9:
+            case 10:
+            case 11:
+                System.out.println("가을입니다.");
+                break;
+            case 12:
+            case 1:
+            case 2:
+                System.out.println("겨울입니다.");
+                break;
+            default:
+                System.out.println("잘못된 입력입니다.");
+        }
+
+        scanner.close();
+    }
+}
+```
+
+**분석**
+
+| 단계 | 내용 |
+|------|------|
+| `month = 7` (예시) | case 6, 7, 8 중 7에 해당 |
+| fall-through | case 6, 7은 break 없이 case 8로 이어지다가 "여름입니다." 출력 후 break |
+| 1~12 외 값 | default 실행 |
+
+**실행 결과** (입력: `7`)
+```
+월(1~12)을 입력하시오:7
+여름입니다.
+```
+
+---
+
+## 7. 반복문
+
+### 7-1. while 문
+
+```java
+// 기본 구조
+while (조건식) {
+    // 조건식이 참인 동안 반복 실행
+}
+
+// 예시
+int i = 0;
+while (i < 10) {
+    System.out.print(i);
+    i++;
+}
+```
+```
+0123456789
+```
+
+**코드 예제 - 평균 구하기**
+```java
+import java.util.Scanner;
+
+public class Ex32WhileSample {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        int count = 0, n = 0;
+        double sum = 0;
+
+        System.out.println("정수를 입력하고 마지막에 0을 입력하세요.");
+
+        while ((n = scanner.nextInt()) != 0) {
+            sum = sum + n;
+            count++;
+        }
+
+        System.out.print("수의 개수는 " + count + "개이며 ");
+        System.out.println("평균은 " + (sum / count) + "입니다.");
+
+        scanner.close();
+    }
+}
+```
+
+**분석**
+
+| 단계 | 내용 |
+|------|------|
+| `n = scanner.nextInt()` | 입력값을 n에 저장하면서 동시에 0인지 비교 |
+| `n != 0` | 0이 아니면 반복 계속, 0이면 탈출 |
+| `sum += n`, `count++` | 합계와 개수 누적 |
+| `sum / count` | 반복 종료 후 평균 출력 |
+
+**실행 결과** (입력: `10 20 30 0`)
+```
+정수를 입력하고 마지막에 0을 입력하세요.
+수의 개수는 3개이며 평균은 20.0입니다.
+```
+
+### 7-2. do-while 문
+
+```java
+// 기본 구조 - 작업문이 최소 한 번 반드시 실행됨
+do {
+    // 작업문
+} while (조건식);
+
+// 예시
+int i = 0;
+do {
+    System.out.print(i);
+    i++;
+} while (i < 10);
+```
+```
+0123456789
+```
+
+### 7-3. 중첩 반복
+
+```java
+for (int i = 0; i < 100; i++) {
+    for (int j = 0; j < 10000; j++) {
+        // 작업 수행
+    }
+}
+```
+
+**코드 예제 - 구구단 (가로 출력)**
+```java
+package week05;
+
+public class Ex04 {
+    public static void main(String[] args) {
+
+        for (int i = 2; i <= 9; i++) {
+            System.out.print("[" + i + "단]\t");
+        }
+        System.out.println();
+
+        for (int j = 1; j <= 9; j++) {
+            for (int i = 2; i <= 9; i++) {
+                System.out.print(i + "X" + j + "=" + (i * j) + "\t");
+            }
+            System.out.println();
+        }
+    }
+}
+```
+
+**분석**
+
+| 단계 | 내용 |
+|------|------|
+| 첫 번째 for | 단 제목(2단~9단) 가로로 출력 |
+| 바깥 for (`j`) | 행(1~9) 기준, 세로 반복 |
+| 안쪽 for (`i`) | 열(2단~9단) 기준, 가로 반복 |
+| `\t` | 탭으로 정렬 |
+
+**실행 결과**
+```
+[2단]   [3단]   [4단]   [5단]   [6단]   [7단]   [8단]   [9단]
+2X1=2   3X1=3   4X1=4   5X1=5   6X1=6   7X1=7   8X1=8   9X1=9
+2X2=4   3X2=6   4X2=8   5X2=10  6X2=12  7X2=14  8X2=16  9X2=18
+...
+2X9=18  3X9=27  4X9=36  5X9=45  6X9=54  7X9=63  8X9=72  9X9=81
+```
+
+**코드 예제 - 구구단 (단 별 출력)**
+```java
+package week05;
+
+public class Ex04r {
+    public static void main(String[] args) {
+
+        for (int i = 2; i <= 9; i++) {
+            System.out.println("[" + i + "단]");
+
+            for (int j = 1; j <= 9; j++) {
+                System.out.println(i + " * " + j + " = " + (i * j));
+            }
+
+            System.out.println();
+        }
+    }
+}
+```
+
+**실행 결과**
+```
+[2단]
+2 * 1 = 2
+2 * 2 = 4
+...
+2 * 9 = 18
+
+[3단]
+3 * 1 = 3
+...
+```
+
+---
+
+## 8. continue 문
+
+```java
+// 다음 반복으로 넘어감 (아래 코드 건너뜀)
+
+// 예제: 양수 합 구하기
+import java.util.Scanner;
+
+public class Ex35ContinueExample {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("정수를 5개 입력하세요.");
+        int sum = 0;
+
+        for (int i = 0; i < 5; i++) {
+            int n = scanner.nextInt();
+
+            if (n <= 0) continue;  // 0 또는 음수는 건너뜀
+            else sum += n;         // 양수만 더함
+        }
+
+        System.out.println("양수의 합은 " + sum);
+
+        scanner.close();
+    }
+}
+```
+
+**분석**
+
+| 단계 | 내용 |
+|------|------|
+| `n <= 0` | 0 이하인 경우 continue로 이번 반복 건너뜀 |
+| `sum += n` | 양수인 경우에만 합산 |
+
+**실행 결과** (입력: `3 -1 0 5 2`)
+```
+정수를 5개 입력하세요.
+양수의 합은 10
+```
+
+---
+
+## 9. break 문
+
+```java
+// 가장 가까운 반복문 하나를 즉시 종료
+
+// 예제 1: 단일 반복문
+for (int i = 1; i <= 10; i++) {
+    if (i == 5) break;
+    System.out.println(i);
+}
+```
+```
+1
+2
+3
+4
+```
+
+```java
+// 예제 2: 중첩 반복 - 안쪽 반복문만 종료
+for (int i = 1; i <= 3; i++) {
+    for (int j = 1; j <= 5; j++) {
+        if (j == 3) break;
+        System.out.println("i=" + i + ", j=" + j);
+    }
+}
+```
+```
+i=1, j=1
+i=1, j=2
+i=2, j=1
+i=2, j=2
+i=3, j=1
+i=3, j=2
+```
+
+**코드 예제 - 입력 종료**
+```java
+import java.util.Scanner;
+
+public class Ex36BreakExample {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("exit를 입력하면 종료합니다.");
+
+        while (true) {
+            System.out.print(">>");
+            String text = scanner.nextLine();
+
+            if (text.equals("exit"))
+                break;
+        }
+
+        System.out.println("종료합니다...");
+        scanner.close();
+    }
+}
+```
+
+**분석**
+
+| 단계 | 내용 |
+|------|------|
+| `while (true)` | 무한 루프 |
+| `text.equals("exit")` | 입력값이 "exit"이면 break로 탈출 |
+| `scanner.nextLine()` | 공백 포함 한 줄 전체 읽음 |
+
+**실행 결과** (입력: `hello`, `exit`)
+```
+exit를 입력하면 종료합니다.
+>>hello
+>>exit
+종료합니다...
+```
+
+---
+
+## 10. 배열 (Array)
+
+- 인덱스와 인덱스에 대응하는 데이터들로 이루어진 자료 구조
+- 같은 타입의 데이터들이 순차적으로 저장됨
+- 인덱스는 0부터 시작
+- 반복문을 이용하여 처리하기에 적합한 자료 구조
+
+### 10-1. 배열 선언과 생성
+
+```java
+// (1) 선언과 생성 분리
+int intArray[];          // 선언
+intArray = new int[5];   // 생성
+
+// (2) 선언과 생성 동시에
+int[] intArray = new int[5];
+
+// (3) 선언과 동시에 초기화
+int[] intArray = {4, 3, 2, 1, 0};
+double[] doubleArray = {0.01, 0.02, 0.03, 0.04};
+
+// 잘못된 선언 (오류)
+int intArray[5];  // 선언 시 크기 지정 불가
+```
+
+### 10-2. 배열 인덱스와 원소 접근
+
+```java
+int[] intArray = new int[5];
+
+intArray[0] = 5;  // 인덱스 0에 5 저장
+intArray[3] = 6;  // 인덱스 3에 6 저장
+
+int n = intArray[3];  // 인덱스 3의 값 읽기 → n = 6
+
+// 잘못된 접근 (오류)
+int x = intArray[-2];  // 음수 인덱스 불가
+int y = intArray[5];   // 범위 초과 (0~4까지)
+
+// 생성 전 접근 (오류)
+int[] arr;
+arr[1] = 8;  // NullPointer 오류
+
+// 올바른 방식
+arr = new int[5];
+arr[1] = 8;
+```
+
+**코드 예제 - 최대값 찾기**
+```java
+package week05;
+
+import java.util.Scanner;
+
+public class Ex07 {
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        int intArray[];
+        intArray = new int[5];
+
+        int max = 0;
+
+        System.out.println("양수 5개를 입력하세요.");
+
+        for (int i = 0; i < 5; i++) {
+            intArray[i] = scanner.nextInt();
+
+            if (intArray[i] > max) {
+                max = intArray[i];
+            }
+        }
+
+        System.out.println("가장 큰 수는 " + max + "입니다.");
+
+        scanner.close();
+    }
+}
+```
+
+**분석**
+
+| 단계 | 내용 |
+|------|------|
+| `max = 0` | 최대값 초기화 (입력이 모두 양수라는 전제) |
+| `intArray[i] = scanner.nextInt()` | 입력값을 배열에 순서대로 저장 |
+| `if (intArray[i] > max)` | 현재 입력값이 기존 최대값보다 크면 갱신 |
+
+**실행 결과** (입력: `3 7 2 9 5`)
+```
+양수 5개를 입력하세요.
+가장 큰 수는 9입니다.
+```
+
+**코드 예제 - for문 합산**
+```java
+package week05;
+
+public class Ex01 {
+    public static void main(String[] args) {
+
+        int i, sum = 0;
+        for (i = 1; i <= 10; i++) {
+            sum += i;
+            System.out.println(i);
+            if (i < 9)
+                System.out.println("+");
+            else {
+                System.out.println("=");
+                System.out.println(sum);
+            }
+        }
+    }
+}
+```
+
+**분석**
+
+| 단계 | 내용 |
+|------|------|
+| `sum += i` | 1부터 i까지 누적 합산 |
+| `i < 9` | 9 미만이면 "+" 출력 |
+| `i >= 9` (else) | 9, 10일 때 "=" 출력 후 누적합 출력 |
+
+**실행 결과**
+```
+1
++
+2
++
+3
++
+4
++
+5
++
+6
++
+7
++
+8
++
+9
+=
+45
+10
+=
+55
+```
+
+---
+
 ## 4주차 수업 (3월 25일)
 
 ## 1. 자바의 특징 (계속)
 
-### ⑥ 가비지 컬렉션 (Garbage Collection)
+### 가비지 컬렉션 (Garbage Collection)
 
 - 자바 언어는 메모리 할당 기능은 있어도 **메모리 반환 기능 없음**
-- 사용하지 않는 메모리는 <span style="color:red">**JVM에 의해 자동 반환 — 가비지 컬렉션(GC)**</span>
+- 사용하지 않는 메모리는 **JVM에 의해 자동 반환 — 가비지 컬렉션(GC)**
 - 개발자가 직접 메모리를 해제하지 않아도 됨 (C/C++과의 차이점)
 
 > **실시간 응용프로그램에 부적합한 이유**: 실행 도중 **예측할 수 없는 시점**에 GC가 실행되어 응용프로그램이 일시적으로 중단될 수 있음
 
 ---
 
-### ⑦ 안전한 프로그램
+### 안전한 프로그램
 
 - **타입 체크가 엄격**하여 잘못된 타입 사용 시 컴파일 단계에서 오류 발생
 - **포인터(Pointer) 개념 없음** → 물리적 메모리 주소 직접 접근 불가 → 메모리 오염 방지
 
 ---
 
-### ⑧ 프로그램 작성 용이
+### 프로그램 작성 용이
 
 - 포인터 개념 없음
 - 동적 메모리 직접 반환 불필요 (GC가 처리)
@@ -31,7 +821,7 @@
 
 ---
 
-### ⑨ JIT 컴파일러 (Just-In-Time Compiler)
+### JIT 컴파일러 (Just-In-Time Compiler)
 
 - 자바는 기본적으로 바이트코드를 **인터프리터 방식**으로 실행 → 기계어 직접 실행보다 느림
 - **JIT 컴파일 기법**으로 실행 속도 개선
@@ -352,7 +1142,6 @@ System.out.println(s instanceof String);  // true
 package week4;
 
 public class Foo {
-    // 두 정수를 더하는 메소드
     public static int sum(int n, int m) {
         return n + m;
     }
@@ -516,7 +1305,7 @@ public class Boo {
 
 > `next()`는 **공백 포함 문자열을 읽지 못함**. 공백 포함 한 줄 전체를 읽으려면 `nextLine()` 사용
 
-**실행 예시** (입력: `이동주 서울 22 70.5 false`)
+**실행 결과** (입력: `이동주 서울 22 70.5 false`)
 ```
 당신의 이름은 이동주입니다.
 당신이 사는 도시는 서울입니다.
@@ -525,6 +1314,8 @@ public class Boo {
 당신은 독신 여부는 false입니다.
 ```
 
+---
+
 ## 3주차 수업 (3월 18일)
 
 ## 1. 프로그래밍 언어의 종류
@@ -532,7 +1323,7 @@ public class Boo {
 ### 1-1. 기계어 (Machine Language)
 
 - `0`과 `1`의 이진수로 구성된 언어
-- <span style="color:red">**CPU는 기계어만 이해하고 처리할 수 있음**</span>
+- **CPU는 기계어만 이해하고 처리할 수 있음**
 
 ---
 
@@ -541,7 +1332,7 @@ public class Boo {
 - 기계어 명령을 `ADD`, `SUB`, `MOV` 등의 **니모닉 기호(Mnemonic Symbol)** 로 일대일 대응시킨 언어
 - 기계어보다 읽기 쉽지만, 여전히 하드웨어에 종속적
 
-> 💡 니모닉(Mnemonic): 기억하기 쉽도록 만든 상징적 약어
+> 니모닉(Mnemonic): 기억하기 쉽도록 만든 상징적 약어
 
 ---
 
@@ -574,20 +1365,20 @@ public class Boo {
 #### 객체 지향 언어 (Object-Oriented Language)
 
 - 현실의 객체를 모델링하여 프로그램을 작성하는 방식
-- <span style="color:red">**상속(Inheritance), 캡슐화(Encapsulation), 다형성(Polymorphism)**</span> 을 활용
+- **상속(Inheritance), 캡슐화(Encapsulation), 다형성(Polymorphism)** 을 활용
 - 유연하고 재사용 가능한 코드 작성 가능
 - 예: `Java`, `C++`, `Python`
 
 #### 함수형 언어 (Functional Language)
 
-- <span style="color:red">**함수를 일급 객체(First-Class Object)로 취급**</span>
+- **함수를 일급 객체(First-Class Object)로 취급**
 - 상태 변경을 피하고 **불변성(Immutability)** 을 지향
 - 함수의 조합으로 복잡한 작업 수행
 - **재귀**, **고차 함수(Higher-Order Function)**, **순수 함수(Pure Function)** 개념 중시
 - 병렬 처리와 높은 수준의 추상화 지원
 - 예: `Python`, `Kotlin`, `Haskell`, `Lisp`, `Scala`
 
->  함수형 언어는 객체 지향의 특성을 그대로 가져가되 함수형 기능을 추가한 형태 (Python, Kotlin 등은 멀티 패러다임 언어)
+> 함수형 언어는 객체 지향의 특성을 그대로 가져가되 함수형 기능을 추가한 형태 (Python, Kotlin 등은 멀티 패러다임 언어)
 
 ---
 
@@ -605,7 +1396,7 @@ C     : .c     →  .obj   →  .exe
 C++   : .cpp   →  .obj   →  .exe
 ```
 
-> 💡 Java는 `.exe`가 아닌 `.class`(바이트코드)로 컴파일되며, JVM 위에서 실행됩니다.
+> Java는 `.exe`가 아닌 `.class`(바이트코드)로 컴파일되며, JVM 위에서 실행됩니다.
 
 ---
 
@@ -639,7 +1430,7 @@ C++   : .cpp   →  .obj   →  .exe
 
 ### 4-1. WORA (Write Once, Run Anywhere)
 
-> <span style="color:red">**"한번 작성된 코드는 OS·H/W에 상관없이 모든 플랫폼에서 실행된다"**</span>
+> **"한번 작성된 코드는 OS·H/W에 상관없이 모든 플랫폼에서 실행된다"**
 
 - C/C++ 등 기존 언어가 가진 **플랫폼 종속성 극복**
 - 네트워크에 연결된 어느 클라이언트에서도 실행 가능
@@ -648,7 +1439,7 @@ C++   : .cpp   →  .obj   →  .exe
 ### 4-2. 바이트코드 (Bytecode)
 
 - 자바 소스를 컴파일한 **목적 코드** (`.class` 파일)
-- <span style="color:red">**CPU에 종속적이지 않은 중립적인 코드**</span>
+- **CPU에 종속적이지 않은 중립적인 코드**
 - JVM에 의해 해석되고 실행됨
 - CPU가 직접 실행하지 않음 → JVM이 인터프리터 방식으로 해석
 
@@ -661,7 +1452,7 @@ C++   : .cpp   →  .obj   →  .exe
 [ 실행 결과 ]
 ```
 
-- <span style="color:red">**JVM 자체는 플랫폼에 종속적**</span> (각 OS에 맞는 JVM이 따로 존재)
+- **JVM 자체는 플랫폼에 종속적** (각 OS에 맞는 JVM이 따로 존재)
 - 그러나 JVM이 설치된 곳이라면 **동일한 바이트코드(.class)가 그대로 실행**됨
 - 오라클(Oracle) 외 IBM, MS 등 다양한 회사에서 제작·공급
 - **실행 환경 = JVM + Java API (클래스 라이브러리)**
@@ -720,7 +1511,7 @@ javac ./src/파일명.java
 | Java 17 (LTS) | 2021 |
 | Java 21 (LTS) | 2023 |
 
-> <span style="color:red">**※ LTS 버전은 장기간 지원이 보장되어 업계에서 안정적으로 앱을 개발하도록 하는 버전. Java 11부터는 3년 간격으로 출시.**</span>
+> LTS 버전은 장기간 지원이 보장되어 업계에서 안정적으로 앱을 개발하도록 하는 버전. Java 11부터는 3년 간격으로 출시.
 
 ---
 
@@ -735,7 +1526,7 @@ javac ./src/파일명.java
 **모듈화의 장점**
 - 실행 시 사용되는 Java API 클래스들을 모듈로 분할
 - 필요 없는 모듈 배제 → 작은 크기의 실행 환경 구성
-- <span style="color:red">**하드웨어가 열악한 소형 IoT 장치 지원 가능**</span>
+- **하드웨어가 열악한 소형 IoT 장치 지원 가능**
 
 ---
 
@@ -759,50 +1550,46 @@ javac ./src/파일명.java
 
 ## 10. Java의 주요 특징
 
-### ① 플랫폼 독립성
+### 플랫폼 독립성
 
 - 하드웨어·운영체제에 종속되지 않는 바이트코드로 컴파일
 - WORA 실현
 
-### ② 객체지향 (OOP)
+### 객체지향 (OOP)
 
-- <span style="color:red">**캡슐화(Encapsulation), 상속(Inheritance), 다형성(Polymorphism)**</span> 지원
+- **캡슐화(Encapsulation), 상속(Inheritance), 다형성(Polymorphism)** 지원
 - 자바의 모든 변수와 함수는 **클래스 내에 선언**
 - 내부 클래스(Inner Class) 작성 가능
 
-### ③ 소스와 클래스 파일
+### 소스와 클래스 파일
 
 - 하나의 소스 파일에 여러 클래스 작성 가능 (단, `public` 클래스는 하나만)
 - 소스 파일 이름 = `public`으로 선언된 클래스 이름 (반드시 동일해야 함)
 - 클래스 파일 하나에는 클래스 하나만 존재
   - 여러 클래스를 가진 소스를 컴파일하면 클래스마다 별도의 `.class` 파일 생성
 
-### ④ 실행 코드 배포
+### 실행 코드 배포
 
 - 한 개 또는 다수의 `.class` 파일로 구성
 - 여러 폴더에 걸친 경우 → `jar` 압축 파일로 배포
-- 응용프로그램 실행은 <span style="color:red">**`main()` 메소드에서 시작**</span>
+- 응용프로그램 실행은 **`main()` 메소드에서 시작**
 - 하나의 클래스 파일에 두 개 이상의 `main()` 메소드 불가
 
-### ⑤ 멀티스레드 (Multi-Thread)
+### 멀티스레드 (Multi-Thread)
 
 - 여러 스레드의 동시 수행 환경 지원
-- <span style="color:red">**운영체제 도움 없이 자체적으로 멀티스레드 지원**</span>
+- **운영체제 도움 없이 자체적으로 멀티스레드 지원**
 - C/C++은 멀티스레드를 위해 운영체제 API를 호출해야 함
 
-### ⑥ 가비지 컬렉션 (Garbage Collection)
+### 가비지 컬렉션 (Garbage Collection)
 
 - 자바 언어에는 메모리 할당 기능은 있으나 메모리 반환 기능은 없음
-- <span style="color:red">**사용하지 않는 메모리는 JVM이 자동으로 반환 (GC)**</span>
+- **사용하지 않는 메모리는 JVM이 자동으로 반환 (GC)**
 - 개발자가 직접 메모리를 해제하지 않아도 됨 (C/C++과의 차이점)
 
 ---
 
 ## 11. 프로그래밍 언어 계보
-
-### Java 중심 계보 (강의 자료)
-
-![Java 중심 계보](./java_lineage.png)
 
 | 언어 | 등장 연도 | 영향 받은 언어 |
 |------|-----------|----------------|
@@ -818,12 +1605,6 @@ javac ./src/파일명.java
 | Java 11 (LTS) | 2018 | - |
 | Java 17 (LTS) | 2021 | - |
 | Java 21 (LTS) | 2023 | - |
-
-### 전체 언어 계보 (참고 자료)
-
-![프로그래밍 언어 전체 계보](https://asset-cdn.tecky.io/2021/10/20/programming_languages_family_trees_uid_616fd206b9de0.png)
-
-> 출처: [Tecky Academy - Evolution of Programming Languages](https://tecky.io/en/blog/evolution-of-programming-languages/)
 
 ---
 
@@ -925,13 +1706,13 @@ javac ./src/파일명.java
 ## Java 기본 코드 예제
 ```java
 public class Main {
-    public static void main(String[] args) {
-        System.out.printf("Hello and welcome!");
+  public static void main(String[] args) {
+    System.out.printf("Hello and welcome!");
 
-        for (int i = 1; i <= 5; i++) {
-            System.out.println("i = " + i);
-        }
+    for (int i = 1; i <= 5; i++) {
+      System.out.println("i = " + i);
     }
+  }
 }
 ```
 
