@@ -1,5 +1,394 @@
 # java2-class2026-dongju
 # 202430219 이동주
+---
+
+## 6주차 정리 (4월 8일)
+
+---
+
+## 1. 배열의 크기 - length 필드
+
+자바의 배열은 객체로 처리되며, 배열의 크기는 `length` 필드에 저장된다.
+
+```java
+int intArray[] = new int[5];
+int size = intArray.length; // 5
+```
+
+`length`를 활용한 순회:
+```java
+for(int i=0; i<intArray.length; i++)
+    System.out.println(intArray[i]);
+```
+
+> **추가 설명**
+> `length`는 메소드가 아니라 필드(변수)다. `String`의 `length()`와 혼동하기 쉬운데, 배열은 괄호 없이 `length`만 쓴다.
+> ```java
+> int[] arr = new int[5];
+> arr.length        // 배열 - 괄호 없음
+> "hello".length()  // String - 괄호 있음
+> ```
+
+> **실수하기 쉬운 포인트**
+> `length`는 배열에 실제로 값이 들어있는 개수가 아니라 선언된 크기를 반환한다. `new int[5]`로 만들면 아무것도 안 넣어도 `length`는 5다.
+
+---
+
+## 2. 함수 호출 시 배열 전달 - C/C++ vs Java
+
+C/C++는 배열과 크기를 별도로 전달해야 하지만, 자바는 배열만 전달해도 `length`로 크기를 알 수 있다.
+
+```java
+// Java
+int sum(int x[]) {
+    int s = 0;
+    for(int n=0; n < x.length; n++)
+        s += x[n];
+    return s;
+}
+```
+
+> **추가 설명**
+> 자바에서 배열을 메소드에 전달하면 배열 전체가 복사되는 게 아니라 참조(주소)가 전달된다. 따라서 메소드 내에서 배열 원소를 수정하면 원본 배열도 바뀐다.
+> ```java
+> void addOne(int[] arr) {
+>     arr[0] = 999; // 원본도 바뀜
+> }
+> ```
+
+> **실수하기 쉬운 포인트**
+> C처럼 "배열을 넘기면 복사본이 생긴다"고 생각하면 안 된다. 같은 배열을 가리키고 있어서 의도치 않게 원본을 수정할 수 있다.
+
+---
+
+## 3. for-each 문
+
+배열이나 열거형의 원소를 순차적으로 접근하는 간결한 for문이다.
+
+```java
+int[] n = {1,2,3,4,5};
+int sum = 0;
+
+for(int k : n) {
+    sum += k;
+}
+```
+
+반복마다 `k`는 `n[0]`, `n[1]`, ..., `n[4]` 순서로 할당된다.
+
+**예제 - 정수 배열 합산 및 문자열 배열 출력:**
+
+```java
+public class Ex39ForeachEx {
+    public static void main(String[] args) {
+        int[] n = { 1, 2, 3, 4, 5 };
+        int sum = 0;
+
+        for (int k : n) {
+            System.out.print(k + " ");
+            sum += k;
+        }
+        System.out.println("합은 " + sum);
+
+        String f[] = { "사과", "배", "바나나", "체리", "딸기", "포도" };
+        for (String s : f) {
+            System.out.print(s + " ");
+        }
+    }
+}
+```
+
+| 항목 | 내용 |
+|---|---|
+| 예상 출력 | `1 2 3 4 5 합은 15` / `사과 배 바나나 체리 딸기 포도` |
+
+> **추가 설명**
+> for-each는 읽기 전용 순회에 적합하다. 내부적으로 인덱스를 따로 관리하지 않기 때문에 현재 몇 번째 원소인지 알 수 없다. 인덱스가 필요한 경우에는 일반 for문을 써야 한다.
+
+> **실수하기 쉬운 포인트**
+> for-each 내부에서 변수에 값을 대입해도 원본 배열이 바뀌지 않는다.
+> ```java
+> for (int k : n) {
+>     k = 0; // 원본 배열 n은 그대로
+> }
+> ```
+> `k`는 배열 원소의 복사본이기 때문에 원본을 수정하려면 일반 for문으로 인덱스를 사용해야 한다.
+
+---
+
+## 4. 2차원 배열
+
+**선언 및 생성:**
+
+```java
+int intArray[][] = new int[2][5];
+```
+
+**length 필드:**
+
+```java
+int i[][] = new int[2][5];
+i.length       // 2 (행의 수)
+i[0].length    // 5 (0번째 행의 열 수)
+```
+
+**Ragged Array (비정형 배열):**
+
+자바의 2차원 배열은 실제로 배열 안에 배열이므로 행마다 열 개수가 달라도 된다.
+
+```java
+int[][] arr = new int[2][];
+arr[0] = new int[3];
+arr[1] = new int[5];
+```
+
+**선언과 동시에 초기화:**
+
+```java
+int intArray[][] = {
+    { 0, 1, 2 },
+    { 3, 4, 5 },
+    { 6, 7, 8 }
+};
+```
+
+> **추가 설명**
+> 자바의 2차원 배열은 C처럼 메모리가 연속적으로 배치된 진짜 2D 구조가 아니다. 각 행이 독립적인 1차원 배열 객체이기 때문에 행마다 크기가 달라도 된다. 이것이 Ragged Array가 가능한 이유다.
+>
+> 2차원 배열 전체를 순회할 때는 이중 for문을 사용한다.
+> ```java
+> for(int r=0; r<intArray.length; r++) {
+>     for(int c=0; c<intArray[r].length; c++) {
+>         System.out.print(intArray[r][c] + " ");
+>     }
+> }
+> ```
+> `intArray[r].length`를 쓰면 Ragged Array에서도 안전하게 순회할 수 있다.
+
+> **실수하기 쉬운 포인트**
+> `intArray.length`는 행의 수고, 열의 수는 `intArray[0].length`다. 헷갈려서 행과 열을 반대로 쓰면 `ArrayIndexOutOfBoundsException`이 발생한다.
+
+---
+
+## 5. 메소드의 배열 리턴
+
+배열 전체가 복사되는 것이 아니라 참조(주소)만 반환된다. 메소드 내 지역변수가 사라져도 Heap에 생성된 배열은 유지된다.
+
+```java
+int[] makeArray() {
+    int temp[] = new int[4];
+    return temp; // 참조 반환
+}
+
+int[] intArray = makeArray(); // 같은 배열을 가리킴
+```
+
+실제 배열이 사라지는 경우는 어떤 변수도 해당 배열을 참조하지 않을 때이며, 그 시점에 GC(Garbage Collector) 대상이 된다.
+
+> **추가 설명**
+> 지역변수 `temp`는 Stack에 저장되고, `new int[4]`로 생성된 실제 배열은 Heap에 저장된다. 메소드가 종료되면 Stack의 `temp`는 사라지지만 Heap의 배열은 살아있고, `intArray`가 그 주소를 이어받아 참조하게 된다.
+
+> **실수하기 쉬운 포인트**
+> 리턴 타입 선언 시 배열 크기를 지정하지 않는다.
+> ```java
+> int[4] makeArray() { ... } // 컴파일 에러
+> int[]  makeArray() { ... } // 올바른 선언
+> ```
+
+---
+
+## 6. 예외 처리 (Exception Handling)
+
+**예외란:** 실행 중 발생하는 예상치 못한 오류 상황이다. 처리하지 않으면 프로그램이 강제 종료된다.
+
+**주요 예외 클래스:**
+
+| 예외 클래스 | 발생 상황 | 패키지 |
+|---|---|---|
+| ArithmeticException | 정수를 0으로 나눌 때 | java.lang |
+| NullPointerException | null 참조 접근 시 | java.lang |
+| ArrayIndexOutOfBoundsException | 배열 범위 초과 접근 시 | java.lang |
+| ClassCastException | 잘못된 타입 변환 시 | java.lang |
+| OutOfMemoryError | 메모리 부족 시 | java.lang |
+| IllegalArgumentException | 잘못된 인자 전달 시 | java.lang |
+| IOException | 입출력 실패 시 | java.io |
+| NumberFormatException | 숫자 형식 불일치 변환 시 | java.lang |
+| InputMismatchException | Scanner 입력 타입 불일치 시 | java.util |
+
+**try-catch-finally 구조:**
+
+```java
+try {
+    // 예외 발생 가능 코드
+}
+catch (처리할예외타입 e) {
+    // 예외 처리 코드
+}
+finally {
+    // 예외 발생 여부와 무관하게 항상 실행
+}
+```
+
+**예제 - 0으로 나누기 예외 처리:**
+
+```java
+public class Ex13 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int dividend, divisor;
+
+        System.out.print("나눔수를 입력하시오:");
+        dividend = scanner.nextInt();
+
+        System.out.print("나눗수를 입력하시오:");
+        divisor = scanner.nextInt();
+
+        try {
+            System.out.println(dividend + "를 " + divisor + "로 나누면 몫은 "
+                    + dividend / divisor + "입니다.");
+        }
+        catch (ArithmeticException e) {
+            System.out.println("0으로 나눌 수 없습니다!");
+        }
+        finally {
+            scanner.close();
+        }
+    }
+}
+```
+
+| 항목 | 내용 |
+|---|---|
+| 정상 입력 | 몫 출력 후 scanner 닫힘 |
+| 0 입력 시 | catch 블록 실행 → "0으로 나눌 수 없습니다!" 출력 |
+
+> **추가 설명**
+> `finally` 블록은 try에서 예외가 발생하든 안 하든, 심지어 catch에서 또 다른 예외가 발생해도 반드시 실행된다. `scanner.close()`처럼 반드시 해제해야 하는 자원 정리 코드를 넣기에 적합하다.
+>
+> `catch` 블록의 `e`를 통해 예외 정보를 출력할 수 있다.
+> ```java
+> catch (ArithmeticException e) {
+>     System.out.println(e.getMessage());
+> }
+> ```
+
+> **실수하기 쉬운 포인트**
+> catch에 선언한 예외 타입과 실제 발생한 예외가 일치하거나 부모-자식 관계여야 처리된다. 타입이 다르면 catch를 통과해서 프로그램이 종료된다.
+>
+> `finally`는 `return`문 이후에도 실행된다는 점에 주의해야 한다.
+
+---
+
+## 7. 객체 지향 프로그래밍 (OOP)
+
+### 캡슐화 (Encapsulation)
+
+객체를 캡슐로 감싸 내부를 외부로부터 보호하는 것. `class`가 그 틀이 된다.
+
+```java
+class Animal {
+    String name;
+    int age;
+    void eat() { ... }
+    void speak() { ... }
+}
+```
+
+> **추가 설명**
+> 캡슐화의 핵심은 접근 제한자(`private`, `public`, `protected`)를 활용해 외부에서 함부로 내부 데이터를 건드리지 못하게 하는 것이다. 필드는 `private`으로 막고, 필요한 경우에만 `getter/setter` 메소드를 통해 접근하게 하는 패턴이 일반적이다.
+> ```java
+> class Animal {
+>     private String name;
+>
+>     public String getName() { return name; }
+>     public void setName(String n) { name = n; }
+> }
+> ```
+
+### 상속 (Inheritance)
+
+상위 클래스(슈퍼 클래스)의 멤버를 하위 클래스(서브 클래스)가 물려받는 것. `extends` 키워드 사용. is-a 관계일 때만 사용해야 한다.
+
+```java
+class Human extends Animal {
+    String hobby;
+    void work() { ... }
+}
+```
+
+> **추가 설명**
+> 자바는 단일 상속만 지원한다. 하나의 클래스는 하나의 부모 클래스만 가질 수 있으며, 다중 상속이 필요한 경우에는 인터페이스(`interface`)를 사용한다.
+
+> **실수하기 쉬운 포인트**
+> is-a 관계가 아닌데 코드 재사용만을 목적으로 상속을 쓰면 설계가 엉켜버린다. 단순 재사용이 목적이라면 상속보다 포함(has-a) 관계를 쓰는 게 낫다.
+
+### 다형성 (Polymorphism)
+
+같은 이름의 메소드가 클래스나 객체에 따라 다르게 동작하는 것.
+
+**오버로딩 vs 오버라이딩:**
+
+| 구분 | 오버로딩 (Overloading) | 오버라이딩 (Overriding) |
+|---|---|---|
+| 발생 위치 | 같은 클래스 내 | 상속 관계 |
+| 조건 | 메소드 이름 같고, 매개변수 다름 | 부모 메소드를 자식이 재정의 |
+| 결정 시점 | 컴파일 시 | 실행 시 (객체 기준) |
+
+```java
+// 오버로딩
+class Test {
+    void print(int a) {}
+    void print(String a) {}
+}
+
+// 오버라이딩
+class Dog extends Animal {
+    @Override
+    void speak() {
+        System.out.println("멍멍");
+    }
+}
+```
+
+> **추가 설명**
+> 오버라이딩 시 `@Override` 어노테이션은 필수는 아니지만 붙이는 것이 강력히 권장된다. 부모 메소드 이름을 잘못 입력했을 때 컴파일러가 오류를 잡아주기 때문이다.
+
+> **실수하기 쉬운 포인트**
+> 오버로딩은 반환 타입만 다르고 매개변수가 같으면 성립하지 않는다. 반드시 매개변수의 타입이나 개수가 달라야 한다.
+> ```java
+> int print(int a) {}
+> void print(int a) {} // 컴파일 에러 - 오버로딩 아님
+> ```
+
+---
+
+## 8. 클래스와 객체
+
+| 구분 | 설명 |
+|---|---|
+| 클래스 | 객체의 속성과 행위를 정의한 설계도 |
+| 객체 | 클래스로 생성된 실체, 메모리 공간을 가짐. 인스턴스(instance)라고도 함 |
+
+클래스는 필드(멤버 변수)와 메소드(멤버 함수)로 구성되며, `public` 접근 지정자를 통해 외부 클래스의 접근을 허용할 수 있다.
+
+> **추가 설명**
+> 객체는 `new` 키워드로 생성하며, 생성할 때마다 독립적인 메모리 공간(Heap)이 할당된다. 같은 클래스로 만든 객체라도 각자 독립적인 필드 값을 가진다.
+> ```java
+> Animal a1 = new Animal();
+> Animal a2 = new Animal();
+> a1.name = "강아지";
+> a2.name = "고양이";
+> // a1과 a2는 서로 영향을 주지 않음
+> ```
+
+> **실수하기 쉬운 포인트**
+> 객체를 선언만 하고 생성하지 않으면 `null` 상태가 된다. 이 상태에서 필드나 메소드에 접근하면 `NullPointerException`이 발생한다.
+> ```java
+> Animal a;
+> a.name = "강아지"; // NullPointerException 발생
+>
+> Animal a = new Animal(); // 이렇게 생성해야 함
+> ```
 
 ---
 ## 5주차 수업 (4월 1일)
