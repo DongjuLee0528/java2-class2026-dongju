@@ -1138,25 +1138,26 @@ System.out.println(s instanceof String);  // true
 ## 14. 코드 분석
 
 ### 14-1. Foo.java
+
 ```java
-package week4;
+package week04;
 
 public class Foo {
-    public static int sum(int n, int m) {
-        return n + m;
-    }
+  public static int sum(int n, int m) {
+    return n + m;
+  }
 
-    public static void main(String[] args) {
-        int i = 20;
-        int s;
-        char a;
+  public static void main(String[] args) {
+    int i = 20;
+    int s;
+    char a;
 
-        s = sum(i, 10);
-        a = '?';
-        System.out.println(a);
-        System.out.println("Hello");
-        System.out.println(s);
-    }
+    s = sum(i, 10);
+    a = '?';
+    System.out.println(a);
+    System.out.println("Hello");
+    System.out.println(s);
+  }
 }
 ```
 
@@ -1181,19 +1182,20 @@ Hello
 ---
 
 ### 14-2. bar.java
+
 ```java
-package week4;
+package week04;
 
 public class bar {
-    public static void main(String[] args) {
-        final double PI = 3.14;
-        double radius = 10.2;
-        double circleArea = radius * radius * PI;
+  public static void main(String[] args) {
+    final double PI = 3.14;
+    double radius = 10.2;
+    double circleArea = radius * radius * PI;
 
-        System.out.print("반지름 " + radius + ", ");
-        System.out.println("원의 면적");
-        System.out.println("원의 면적 = " + circleArea);
-    }
+    System.out.print("반지름 " + radius + ", ");
+    System.out.println("원의 면적");
+    System.out.println("원의 면적 = " + circleArea);
+  }
 }
 ```
 
@@ -1216,23 +1218,24 @@ public class bar {
 ---
 
 ### 14-3. Woo.java (타입 변환)
+
 ```java
-package week4;
+package week04;
 
 public class Woo {
-    public static void main(String[] args) {
-        byte b = 127;
-        int i = 100;
+  public static void main(String[] args) {
+    byte b = 127;
+    int i = 100;
 
-        System.out.println(b + i);
-        System.out.println(10 / 4);
-        System.out.println(10.0 / 4);
-        System.out.println((char) 0x12340041);
-        System.out.println((byte) (b + i));
-        System.out.println((int) 2.9 + 1.8);
-        System.out.println((int) (2.9 + 1.8));
-        System.out.println((int) 2.9 + (int) 1.8);
-    }
+    System.out.println(b + i);
+    System.out.println(10 / 4);
+    System.out.println(10.0 / 4);
+    System.out.println((char) 0x12340041);
+    System.out.println((byte) (b + i));
+    System.out.println((int) 2.9 + 1.8);
+    System.out.println((int) (2.9 + 1.8));
+    System.out.println((int) 2.9 + (int) 1.8);
+  }
 }
 ```
 
@@ -1264,32 +1267,33 @@ A
 ---
 
 ### 14-4. Boo.java (Scanner)
+
 ```java
-package week4;
+package week04;
 
 import java.util.Scanner;
 
 public class Boo {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+  public static void main(String[] args) {
+    Scanner scanner = new Scanner(System.in);
 
-        String name = scanner.next();
-        System.out.println("당신의 이름은 " + name + "입니다.");
+    String name = scanner.next();
+    System.out.println("당신의 이름은 " + name + "입니다.");
 
-        String city = scanner.next();
-        System.out.println("당신이 사는 도시는 " + city + "입니다.");
+    String city = scanner.next();
+    System.out.println("당신이 사는 도시는 " + city + "입니다.");
 
-        int age = scanner.nextInt();
-        System.out.println("당신의 나이는 " + age + "살입니다.");
+    int age = scanner.nextInt();
+    System.out.println("당신의 나이는 " + age + "살입니다.");
 
-        double weight = scanner.nextDouble();
-        System.out.println("당신의 체중은 " + weight + "kg입니다.");
+    double weight = scanner.nextDouble();
+    System.out.println("당신의 체중은 " + weight + "kg입니다.");
 
-        boolean single = scanner.nextBoolean();
-        System.out.println("당신은 독신 여부는 " + single + "입니다.");
+    boolean single = scanner.nextBoolean();
+    System.out.println("당신은 독신 여부는 " + single + "입니다.");
 
-        scanner.close();
-    }
+    scanner.close();
+  }
 }
 ```
 

@@ -1,4 +1,4 @@
-package week4;
+package week04;
 
 public class Foo {
     // 두 정수를 더하는 메소드
