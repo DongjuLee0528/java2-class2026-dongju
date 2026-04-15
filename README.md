@@ -2,7 +2,436 @@
 # 202430219 이동주
 
 ---
+## 7주차 정리 (4월 15일)
 
+---
+
+## 1. 클래스 (Class)
+
+클래스는 객체를 만들기 위한 설계도이며, `class` 키워드로 선언한다. 필드(데이터 저장)와 메소드(기능 수행)로 구성된다.
+
+`public`을 클래스에 붙이면 다른 모든 클래스에서 해당 클래스를 사용할 수 있고, 멤버에 붙이면 다른 모든 클래스에서 해당 멤버에 접근할 수 있다.
+
+```java
+public class Circle {
+    int radius;
+    String name;
+
+    public double getArea() {
+        return 3.14 * radius * radius;
+    }
+}
+```
+
+핵심 개념:
+- 클래스로 객체를 생성 (`new`)
+- 객체는 필드 값 저장 + 메소드 호출
+- 같은 클래스로 여러 객체 생성 가능하며 서로 독립적
+
+---
+
+## 2. 객체 생성과 활용
+
+객체는 선언 → 생성 → 사용 순서로 다룬다. `new` 키워드로 메모리를 할당하고, 점 연산자(`.`)로 필드와 메소드에 접근한다.
+
+```java
+Circle pizza;                  // 1. 선언
+pizza = new Circle();          // 2. 생성
+pizza.radius = 10;             // 3. 필드 값 설정
+pizza.name = "자바피자";
+double area = pizza.getArea(); // 4. 메소드 호출
+```
+
+객체를 생성하지 않고 접근하면 `NullPointerException`이 발생한다.
+
+```java
+// 잘못된 코드
+Circle pizza;
+pizza.radius = 10; // NullPointerException
+
+// 올바른 코드
+pizza = new Circle();
+pizza.radius = 10;
+```
+
+---
+
+## 3. 생성자 (Constructor)
+
+객체 생성 시 자동으로 호출되어 필드를 초기화하는 메소드다.
+
+특징:
+- 클래스 이름과 동일해야 한다
+- 리턴 타입이 없다 (`void`도 불가)
+- `new` 연산자와 함께 딱 한 번 실행된다
+- 객체를 바로 사용할 수 있는 상태로 만든다
+
+```java
+class Circle {
+    int radius;
+    String name;
+
+    Circle(int r, String n) {
+        radius = r;
+        name = n;
+    }
+}
+
+Circle pizza = new Circle(10, "자바피자");
+```
+
+실행 흐름:
+1. `new Circle(10, "자바피자")` 실행
+2. 생성자 호출
+3. `radius = 10`, `name = "자바피자"` 초기화
+4. 객체 생성 완료
+
+잘못된 코드 (리턴 타입 사용 시 오류):
+```java
+public void Circle() { } // 컴파일 오류
+```
+
+---
+
+## 4. 생성자 오버로딩
+
+매개변수가 다른 생성자를 여러 개 정의할 수 있다. 생성자가 하나라도 선언되면 기본 생성자는 자동 생성되지 않으므로 필요하면 직접 만들어야 한다.
+
+```java
+public class Ex44Book {
+    String title;
+    String author;
+
+    public Ex44Book(String t) {
+        title = t;
+        author = "작자미상";
+    }
+
+    public Ex44Book(String t, String a) {
+        title = t;
+        author = a;
+    }
+
+    public static void main(String[] args) {
+        Ex44Book littlePrince = new Ex44Book("어린왕자", "생텍쥐페리");
+        Ex44Book loveStory = new Ex44Book("춘향전");
+
+        System.out.println(littlePrince.title + " " + littlePrince.author);
+        System.out.println(loveStory.title + " " + loveStory.author);
+    }
+}
+```
+
+실행 결과:
+```
+어린왕자 생텍쥐페리
+춘향전 작자미상
+```
+
+기본 생성자가 자동 생성되지 않는 경우:
+```java
+class Circle {
+    public Circle(int r) { } // 생성자 존재
+}
+
+Circle c = new Circle(); // 오류 발생 - 기본 생성자 없음
+
+// 해결: 직접 추가
+class Circle {
+    public Circle() { }       // 직접 추가
+    public Circle(int r) { }
+}
+```
+
+---
+
+## 5. this 레퍼런스
+
+현재 객체 자신을 가리키는 참조 변수다. 매개변수 이름과 필드 이름이 같을 때 구분하기 위해 사용한다.
+
+```java
+class Circle {
+    int radius;
+
+    public Circle(int radius) {
+        this.radius = radius; // this.radius = 필드, radius = 매개변수
+    }
+
+    double getArea() {
+        return 3.14 * this.radius * this.radius;
+    }
+}
+```
+
+`this` 없이 작성하면 둘 다 지역변수로 처리되어 의미 없는 코드가 된다:
+```java
+public Circle(int radius) {
+    radius = radius; // 의미 없음 (둘 다 지역변수)
+}
+```
+
+---
+
+## 6. this()로 다른 생성자 호출
+
+같은 클래스의 다른 생성자를 호출할 때 사용한다. 반드시 생성자의 첫 줄에 위치해야 한다.
+
+```java
+class Book {
+    String title;
+    String author;
+
+    public Book() {
+        this("제목없음", "작자미상"); // 반드시 첫 줄
+    }
+
+    public Book(String t, String a) {
+        title = t;
+        author = a;
+    }
+}
+```
+
+첫 줄이 아닌 경우 컴파일 오류:
+```java
+public Book() {
+    System.out.println("생성자 호출");
+    this("제목", "저자"); // 오류 - 첫 줄 아님
+}
+```
+
+---
+
+## 7. 객체 배열
+
+객체 배열은 참조(주소)를 저장하는 배열이다. `new Circle[5]`는 배열(참조 공간)만 만들 뿐 실제 객체는 생성되지 않으므로, 각 요소에 별도로 `new`를 해야 한다.
+
+```java
+public class Ex46CircleArray {
+    public static void main(String[] args) {
+
+        Circle[] c;
+        c = new Circle[5];
+
+        for (int i = 0; i < c.length; i++) {
+            c[i] = new Circle(i); // 객체 생성 필수
+        }
+
+        for (int i = 0; i < c.length; i++) {
+            System.out.print((int)(c[i].getArea()) + " ");
+        }
+    }
+}
+```
+
+실행 결과:
+```
+0 3 12 28 50
+```
+
+잘못된 코드:
+```java
+Circle[] c = new Circle[5];
+c[0].getArea(); // 오류 - 객체 없음
+
+// 올바른 코드
+c[0] = new Circle(0);
+c[0].getArea();
+```
+
+---
+
+## 8. 메소드 (Method)
+
+모든 메소드는 반드시 클래스 내부에 존재해야 한다.
+
+```java
+public int getSum(int i, int j) {
+    int sum = i + j;
+    return sum;
+}
+```
+
+인자 전달 방식:
+
+기본 타입 (값 전달 - Call by Value):
+```java
+static void increase(int m) {
+    m = m + 1;
+}
+
+public static void main(String[] args) {
+    int n = 10;
+    increase(n);
+    System.out.println(n); // 10 - 원본 변경 없음
+}
+```
+
+배열 (참조 전달):
+```java
+static void increase(int[] array) {
+    for (int i = 0; i < array.length; i++) {
+        array[i]++;
+    }
+}
+
+public static void main(String[] args) {
+    int[] a = {1, 2, 3, 4, 5};
+    increase(a);
+    // 출력: 2 3 4 5 6 - 원본 변경됨
+}
+```
+
+---
+
+## 9. 메소드 오버로딩 vs 오버라이딩
+
+| 구분 | 오버로딩 (Overloading) | 오버라이딩 (Overriding) |
+|---|---|---|
+| 위치 | 같은 클래스 내 | 부모 - 자식 클래스 간 |
+| 메소드 이름 | 동일 | 동일 |
+| 매개변수 | 달라야 함 | 동일해야 함 |
+| 리턴 타입 | 무관 | 동일해야 함 |
+| 결정 시점 | 컴파일 시 | 실행 시 (객체 기준) |
+| 목적 | 같은 이름으로 다양한 기능 제공 | 부모 메소드를 자식이 재정의 |
+
+오버로딩은 매개변수가 달라야 성립한다. 리턴 타입만 다른 경우는 오버로딩이 아니라 컴파일 오류다.
+
+```java
+// 오버로딩 성공
+public int getSum(int i, int j) { return i + j; }
+public int getSum(int i, int j, int k) { return i + j + k; }
+public double getSum(double i, double j) { return i + j; }
+
+// 오버로딩 실패 - 컴파일 오류
+public int getSum(int i, int j) { return i + j; }
+public double getSum(int i, int j) { return (double)(i + j); } // 매개변수 동일 → 오류
+```
+
+오버라이딩 예시:
+```java
+class Dog extends Animal {
+    @Override
+    void speak() {
+        System.out.println("멍멍");
+    }
+}
+```
+
+`@Override` 어노테이션은 필수는 아니지만 부모 메소드 이름을 잘못 입력했을 때 컴파일러가 오류를 잡아주므로 붙이는 것이 권장된다.
+
+---
+
+## 10. 객체 치환과 가비지 컬렉션
+
+객체 대입은 값 복사가 아니라 참조(주소) 복사다.
+
+```java
+Samp ob1 = new Samp(3);
+Samp ob2 = new Samp(4);
+
+ob1 = ob2; // ob1도 id=4 객체를 가리킴
+           // 기존 id=3 객체는 참조 끊김 → 가비지
+
+System.out.println("ob1.id=" + ob1.get()); // 4
+System.out.println("ob2.id=" + ob2.get()); // 4
+```
+
+가비지 컬렉션:
+- 참조가 끊긴 객체는 가비지가 되며 JVM이 자동으로 메모리를 회수한다
+- C/C++과 달리 개발자가 직접 삭제할 수 없다
+- `System.gc()`로 요청은 가능하지만 실행 시점은 JVM이 결정한다
+
+```java
+Person a = new Person("이몽룡");
+Person b = new Person("성춘향");
+
+b = a; // "성춘향" 객체는 참조 끊김 → 가비지
+```
+
+---
+
+## 11. 접근 지정자
+
+| 지정자 | 접근 범위 |
+|---|---|
+| private | 같은 클래스 내부만 |
+| default (생략) | 같은 패키지 내 |
+| protected | 같은 패키지 + 상속 관계 |
+| public | 모든 클래스 |
+
+범위 크기: `private` < `default` < `protected` < `public`
+
+`default`는 키워드 없이 아무것도 쓰지 않는 것이며, `protected`는 상속 관계 포함임을 반드시 기억해야 한다.
+
+---
+
+## 12. static 멤버
+
+클래스에 속하며 모든 객체가 공유하는 멤버다. 클래스 로딩 시 1번만 생성되며, 객체 없이 클래스 이름으로 직접 접근한다.
+
+```java
+class StaticSample {
+    int n;              // non-static 필드
+    void g() { }        // non-static 메소드
+
+    static int m;       // static 필드
+    static void f() { } // static 메소드
+}
+
+StaticSample.m = 10; // 클래스명으로 접근 (권장)
+StaticSample.f();
+```
+
+| 구분 | static | non-static |
+|---|---|---|
+| 생성 시점 | 클래스 로딩 시 | 객체 생성 시 |
+| 공유 여부 | 모든 객체가 공유 | 객체마다 별도 존재 |
+| 접근 방법 | 클래스명으로 접근 | 객체로 접근 |
+
+static 메소드의 제약:
+- non-static 멤버에 접근 불가 (객체가 없기 때문)
+- `this` 사용 불가 (객체가 없기 때문)
+
+```java
+static void s1(int x) {
+    n = x;      // 오류 - non-static 필드 접근 불가
+    f1(3);      // 오류 - non-static 메소드 호출 불가
+    this.m = x; // 오류 - this 사용 불가
+}
+```
+
+전역 변수와 전역 함수가 필요할 때, 또는 모든 객체가 공유해야 하는 값이 있을 때 `static`을 활용한다.
+
+---
+
+## 13. final 키워드
+
+| 대상 | 의미 |
+|---|---|
+| final 클래스 | 상속 불가 (`extends` 불가) |
+| final 메소드 | 오버라이딩 불가 |
+| final 필드 | 값 변경 불가 (상수), 선언 시 초기화 필수 |
+
+```java
+// final 클래스
+final class FinalClass { }
+class DerivedClass extends FinalClass { } // 오류
+
+// final 메소드
+class SuperClass {
+    protected final int finalMethod() { return 0; }
+}
+class SubClass extends SuperClass {
+    protected int finalMethod() { return 1; } // 오류
+}
+
+// final 필드
+public static final double PI = 3.14; // 선언과 동시에 초기화 필수
+ROWS = 30; // 오류 - 값 변경 불가
+```
+
+---
 ## 6주차 정리 (4월 8일)
 
 ---
