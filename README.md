@@ -1,6 +1,527 @@
 # java2-class2026-dongju
 # 202430219 이동주
+## 8주차 정리 (4월 29일)
 
+---
+
+## 1. 상속 (Inheritance)
+
+공통 기능을 슈퍼 클래스에 작성하고, 서브 클래스는 필요한 기능만 추가해 중복을 제거하는 구조다. `extends` 키워드를 사용하며 "부모 클래스를 물려받아 자식 클래스를 확장한다"는 의미다.
+
+- 슈퍼 클래스 객체와 서브 클래스 객체는 별개
+- 서브 클래스 객체는 슈퍼 클래스 멤버 + 자신의 멤버를 함께 가짐
+- 상속은 부모 객체를 따로 만드는 게 아니라 한 객체 안에 부모 부분 + 자식 부분이 같이 존재 (많이 오해하는 부분)
+
+**예제 5-1: Point & ColorPoint**
+
+```java
+class Point {
+    private int x, y;
+
+    public void set(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void showPoint() {
+        System.out.println("(" + x + "," + y + ")");
+    }
+}
+
+class ColorPoint extends Point {
+    private String color;
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public void showColorPoint() {
+        System.out.print(color);
+        showPoint();
+    }
+}
+
+public class Ex51ColorPointEx {
+    public static void main(String[] args) {
+        Point p = new Point();
+        p.set(1, 2);
+        p.showPoint();
+
+        ColorPoint cp = new ColorPoint();
+        cp.set(3, 4);
+        cp.setColor("red");
+        cp.showColorPoint();
+    }
+}
+```
+
+실행 결과:
+```
+(1,2)
+red(3,4)
+```
+
+- `cp.set()`은 `ColorPoint` 객체를 통해 `Point`의 `set()` 호출
+- `showColorPoint()`에서 `showPoint()` 호출 가능 (상속받았으므로)
+
+**서브 클래스 객체의 메모리 구조**
+
+```
+ColorPoint 객체 (cp)
+ ├── int x = 3        (Point 클래스 멤버)
+ ├── int y = 4        (Point 클래스 멤버)
+ ├── set(int x, int y)
+ ├── showPoint()
+ ├── color = "red"    (ColorPoint 클래스 멤버)
+ ├── setColor(String color)
+ └── showColorPoint()
+```
+
+**자바 상속의 특징**
+
+- 다중 상속 불허 — C++와 달리 모호성(Ambiguity) 문제 방지 목적
+- 두 부모 클래스에 동일한 이름의 멤버가 있으면 어느 부모 멤버를 호출할지 모호해짐
+- 인터페이스의 다중 상속은 허용
+- 모든 자바 클래스는 묵시적으로 `Object` 클래스를 상속 (`java.lang.Object`가 모든 클래스의 슈퍼 클래스)
+
+**슈퍼 클래스 멤버 접근 규칙**
+
+| 접근 제어자 | 서브 클래스 접근 |
+|---|---|
+| private | 불가 |
+| default | 같은 패키지일 때만 가능 |
+| protected | 패키지 무관하게 서브 클래스 항상 가능 |
+| public | 항상 가능 |
+
+---
+
+## 2. 생성자 선택과 super()
+
+서브 클래스 객체 생성 시 슈퍼 클래스 생성자 1개 + 서브 클래스 생성자 1개가 실행된다.
+
+- `super()`로 슈퍼 클래스 생성자를 명시적으로 선택 가능
+- `super()`를 작성하지 않으면 컴파일러가 자동으로 슈퍼 클래스 기본 생성자를 호출 → 좌표가 `(0,0)`으로 초기화될 수 있으므로 원하는 생성자는 명시적으로 호출하는 것이 중요
+
+**예제 5-2: super() 사용**
+
+```java
+class Point1 {
+    private int x, y;
+
+    public Point1() {
+        this.x = this.y = 0;
+    }
+
+    public Point1(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void showPoint() {
+        System.out.println("(" + x + "," + y + ")");
+    }
+}
+
+class ColorPoint1 extends Point1 {
+    private String color;
+
+    public ColorPoint1(int x, int y, String color) {
+        super(x, y); // Point1(int x, int y) 호출
+        this.color = color;
+    }
+
+    public void showColorPoint() {
+        System.out.print(color);
+        showPoint();
+    }
+}
+
+public class Ex52SuperEx {
+    public static void main(String[] args) {
+        ColorPoint1 cp = new ColorPoint1(5, 6, "blue");
+        cp.showColorPoint();
+    }
+}
+```
+
+실행 결과:
+```
+blue(5,6)
+```
+
+실행 순서:
+```
+new ColorPoint1(5, 6, "blue")
+  → super(5, 6) 호출
+    → Point1(int x, int y) 실행 → x=5, y=6 저장
+  → this.color = "blue"
+  → 객체 생성 완료
+  → showColorPoint() 호출 → blue(5,6)
+```
+
+---
+
+## 3. 업캐스팅 / 다운캐스팅
+
+**업캐스팅**: 서브 클래스 레퍼런스를 슈퍼 클래스 레퍼런스에 대입. 자동 변환.
+
+```java
+class Person {
+    String name;
+    String id;
+
+    public Person(String name) {
+        this.name = name;
+    }
+}
+
+class Student extends Person {
+    String grade;
+    String department;
+
+    public Student(String name) {
+        super(name);
+    }
+}
+
+public class UpcastingEx {
+    public static void main(String[] args) {
+        Person p;
+        Student s = new Student("이재문");
+
+        p = s; // 업캐스팅 발생
+
+        System.out.println(p.name); // 오류 없음
+        p.grade = "A";              // 컴파일 오류
+        p.department = "Com";       // 컴파일 오류
+    }
+}
+```
+
+- `p` 레퍼런스는 `Person` 타입이므로 `Person` 멤버만 접근 가능
+- 모든 멤버 접근하려면 `s` 레퍼런스 사용
+- 실제 활용 목적은 여러 자식 클래스를 하나의 부모 타입으로 다루기 위해서
+
+```java
+Person[] people = new Person[3];
+people[0] = new Student("홍길동");
+people[1] = new Student("김영희");
+people[2] = new Person("이순신");
+```
+
+**다운캐스팅**: 업캐스팅된 레퍼런스를 다시 서브 클래스 타입으로 복원. 반드시 명시적 형변환 필요.
+
+```java
+public class DowncastingEx {
+    public static void main(String[] args) {
+        Person p = new Student("이재문"); // 업캐스팅
+
+        Student s;
+        s = (Student)p; // 다운캐스팅
+
+        System.out.println(s.name); // 오류 없음
+        s.grade = "A";              // 오류 없음
+    }
+}
+```
+
+**instanceof**: 레퍼런스가 가리키는 객체 타입 식별. `true` / `false` 반환.
+
+```java
+Person p = new Professor();
+
+if (p instanceof Person)      // true
+if (p instanceof Student)     // false
+if (p instanceof Researcher)  // true
+if (p instanceof Professor)   // true
+
+if ("java" instanceof String) // true
+if (3 instanceof int)         // 문법 오류 - 기본형에는 사용 불가
+```
+
+`new Professor()` 객체는 `Professor` 타입이면서 `Researcher` 타입이고 `Person` 타입이기도 하다.
+
+---
+
+## 4. 오버라이딩 & 동적 바인딩
+
+서브 클래스에서 슈퍼 클래스 메소드를 재정의하는 것. 업캐스팅 후 호출해도 항상 오버라이딩된 메소드가 실행된다.
+
+**(a) 직접 호출**
+
+```java
+class A {
+    void f() { System.out.println("A의 f() 호출"); }
+}
+
+class B extends A {
+    void f() { System.out.println("B의 f() 호출"); }
+}
+
+B b = new B();
+b.f(); // "B의 f() 호출"
+```
+
+**(b) 업캐스팅 후 호출**
+
+```java
+A a = new B();
+a.f(); // 오버라이딩된 B의 f() 실행
+```
+
+**동적 바인딩 심화 — SuperObject 예제**
+
+슈퍼 클래스 내부에서 호출할 때도 동적 바인딩이 적용된다.
+
+```java
+class SuperObject {
+    protected String name;
+
+    public void paint() {
+        draw(); // 여기서도 동적 바인딩 적용
+    }
+
+    public void draw() {
+        System.out.println("Super Object");
+    }
+}
+
+public class SubObject extends SuperObject {
+    public void draw() {
+        System.out.println("Sub Object");
+    }
+
+    public static void main(String[] args) {
+        SuperObject b = new SubObject();
+        b.paint(); // "Sub Object" 출력
+    }
+}
+```
+
+`paint()`는 `SuperObject`에 있지만, `draw()`는 실제 객체인 `SubObject`의 것이 호출된다. `SuperObject`는 키워드가 아님에 주의.
+
+**예제 5-4: 다형성 실현**
+
+```java
+class Shape {
+    public void draw() { System.out.println("Shape"); }
+}
+
+class Line extends Shape {
+    public void draw() { System.out.println("Line"); }
+}
+
+class Rect extends Shape {
+    public void draw() { System.out.println("Rect"); }
+}
+
+class Circle extends Shape {
+    public void draw() { System.out.println("Circle"); }
+}
+
+public class Ex54MethodOverridingEx {
+    static void paint(Shape p) {
+        p.draw(); // 동적 바인딩
+    }
+
+    public static void main(String[] args) {
+        Line line = new Line();
+        paint(line);
+
+        paint(new Shape());
+        paint(new Line());
+        paint(new Rect());
+        paint(new Circle());
+    }
+}
+```
+
+실행 결과:
+```
+Line
+Shape
+Line
+Rect
+Circle
+```
+
+`paint()` 하나로 모든 도형 처리 가능. 새로운 도형 클래스를 추가해도 기존 코드 수정 불필요.
+
+**오버로딩 vs 오버라이딩 비교**
+
+| 구분 | 오버로딩 | 오버라이딩 |
+|---|---|---|
+| 관계 | 동일 클래스 내 또는 상속 | 상속 관계 |
+| 조건 | 이름 동일, 인자 개수/타입 달라야 함 | 이름, 인자 타입/개수, 리턴 타입 모두 동일 |
+| 목적 | 사용 편리성 향상 | 새로운 기능으로 재정의 |
+| 바인딩 | 정적 바인딩 | 동적 바인딩 |
+
+---
+
+## 5. 추상 클래스 (Abstract Class)
+
+`abstract`로 선언된 메소드를 추상 메소드라 하며, 메소드 코드 없이 원형만 선언한다.
+
+```java
+abstract public void draw();                         // 추상 메소드 O
+abstract public String fail() { return "Good Bye"; } // 추상 메소드 X - 컴파일 오류
+```
+
+추상 클래스는 두 가지 형태가 있다.
+
+```java
+// 추상 메소드를 가진 추상 클래스
+abstract class Shape {
+    public Shape() { }
+    public void edit() { }
+    abstract public void draw();
+}
+
+// 추상 메소드 없는 추상 클래스 (abstract만 선언해도 가능)
+abstract class JComponent {
+    String name;
+    public void load(String name) { this.name = name; }
+}
+```
+
+추상 메소드를 가진 클래스를 `abstract`로 선언하지 않으면 컴파일 오류.
+
+```java
+class fault {
+    abstract public void f(); // 오류 - abstract 클래스로 선언되어야 함
+}
+```
+
+**인스턴스 생성 불가**
+
+```java
+JComponent p;             // 레퍼런스 선언은 가능
+p = new JComponent();     // 컴파일 오류
+Shape obj = new Shape();  // 컴파일 오류
+```
+
+**추상 클래스 상속**
+
+추상 클래스를 상속받고 추상 메소드를 구현하지 않으면 서브 클래스도 `abstract`로 선언해야 한다.
+
+```java
+abstract class A {
+    abstract public int add(int x, int y);
+}
+
+abstract class B extends A { // 구현 안 했으므로 abstract 필수
+    public void show() { System.out.println("B"); }
+}
+
+class C extends A {
+    public int add(int x, int y) { return x + y; } // 구현 완료 → abstract 불필요
+    public void show() { System.out.println("C"); }
+}
+
+A a = new A(); // 컴파일 오류
+B b = new B(); // 컴파일 오류
+C c = new C(); // 정상
+```
+
+목적: 상속을 위한 슈퍼 클래스로 활용, 서브 클래스에서 추상 메소드 구현 강제, 다형성 실현.
+
+```java
+abstract class Shape {
+    public abstract void draw();
+}
+
+class Line extends Shape {
+    @Override
+    public void draw() { System.out.println("Line"); }
+}
+
+class Rect extends Shape {
+    @Override
+    public void draw() { System.out.println("Rect"); }
+}
+
+class Circle extends Shape {
+    @Override
+    public void draw() { System.out.println("Circle"); }
+}
+```
+
+---
+
+## 6. 인터페이스 (Interface)
+
+정해진 규격에 맞기만 하면 연결 가능하고 각 구현 방법은 달라도 된다는 개념. 클래스가 구현해야 할 메소드들이 선언되는 추상형. `interface` 키워드 사용.
+
+```java
+interface PhoneInterface {
+    public static final int TIMEOUT = 10000; // 상수 (public static final 생략 가능)
+    public abstract void sendCall();          // 추상 메소드 (public abstract 생략 가능)
+    public abstract void receiveCall();
+    public default void printLogo() {         // 디폴트 메소드 (public 생략 가능)
+        System.out.println("** Phone **");
+    }
+}
+```
+
+**인터페이스 구성 요소별 규칙**
+
+| 구성 요소 | 규칙 |
+|---|---|
+| 상수 | `public`만 허용. `public static final` 생략 가능 |
+| 추상 메소드 | `public abstract` 생략 가능 |
+| default 메소드 | 코드 작성 가능. 구현 클래스에 자동 상속. `public`만 허용, 생략 가능 |
+| private 메소드 | 코드 작성 필수. 인터페이스 내 다른 메소드에 의해서만 호출 가능 |
+| static 메소드 | `public`, `private` 모두 지정 가능. 생략 시 `public` |
+
+**추상 클래스 vs 인터페이스 비교**
+
+| 구분 | 추상 클래스 | 인터페이스 |
+|---|---|---|
+| 키워드 | abstract | interface |
+| 변수 | 제한 없음 | static final (상수만) |
+| 접근 제어자 | 제한 없음 | public |
+| 메소드 | 제한 없음 | abstract, default, static, private |
+| 상속 키워드 | extends | implements |
+| 다중 상속 | 불가 | 가능 |
+
+**공통점**
+
+- 추상 메소드를 가지고 있어야 함
+- 인스턴스 생성 불가 (`new` 사용 불가)
+- 상속받은 구현체 인스턴스를 사용해야 함
+- 상속한 클래스는 추상 메소드를 반드시 구현해야 함
+
+---
+
+## 7. 패키지 & import
+
+클래스 이름 충돌 방지 및 관련 클래스 관리를 위한 디렉터리 구조. 이름이 같아도 경로가 다르면 다른 파일로 취급한다.
+
+```
+Project/FileIO/Tools.class   // 서로 다른 파일로 인식
+Project/UI/Tools.class
+```
+
+**패키지 vs 모듈 비교**
+
+| 구분 | 패키지 | 모듈 |
+|---|---|---|
+| 개념 | 관련 클래스/인터페이스 묶음 | 여러 패키지와 자원 묶음 |
+| 단위 | 작은 단위 | 더 큰 단위 |
+| 저장 | 디렉터리, jar | .jmod 파일 |
+| 관계 | 패키지가 모여 모듈 구성 | 모듈이 패키지 포함 |
+
+클래스 → 패키지 → 모듈
+
+**import 방법**
+
+| 방법 | 예시 |
+|---|---|
+| import 없이 완전 경로명 사용 | `java.util.Scanner sc = new java.util.Scanner(System.in)` |
+| 특정 클래스만 import | `import java.util.Scanner` |
+| 패키지 전체 import | `import java.util.*` |
+
+`import java.util.*`은 `java.util` 패키지 내 클래스만 포함하며, 하위 패키지는 포함하지 않는다.
 ---
 ## 7주차 정리 (4월 15일)
 
