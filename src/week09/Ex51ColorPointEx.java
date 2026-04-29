@@ -1,3 +1,7 @@
+package week09;
+
+import java.awt.*;
+
 public class Ex51ColorPointEx {
     public static void main(String[] args) {
         Point p = new Point();
