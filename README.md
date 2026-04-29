@@ -84,11 +84,11 @@ Circle pizza = new Circle(10, "자바피자");
 1. `new Circle(10, "자바피자")` 실행
 2. 생성자 호출
 3. `radius = 10`, `name = "자바피자"` 초기화
-4. 객체 생성 완료
+```java
+public void Circle() { } // 컴파일 오류4. 객체 생성 완료
 
 잘못된 코드 (리턴 타입 사용 시 오류):
-```java
-public void Circle() { } // 컴파일 오류
+
 ```
 
 ---
