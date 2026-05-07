@@ -1,5 +1,645 @@
 # java2-class2026-dongju
 # 202430219 이동주
+
+## 10주차 정리 (5월 6일)
+
+---
+
+## 1. 자바 API의 모듈 파일 (Temurin OpenJDK 24)
+
+- Temurin OpenJDK 24부터 **JEP 439 표준**을 따르게 되어 `jmods` 디렉토리가 포함되지 않음
+- Temurin의 `jlink` tool을 활성화하면 JMOD 파일 없이도 사용자 지정 run-time 이미지 생성 가능 → JDK 크기 약 25% 감소
+- Temurin OpenJDK 24 빌드 시 기본 자동 활성화
+- jmods 파일 확인하려면 다른 OpenJDK 배포판 사용
+
+---
+
+## 2. 패키지 만들기
+
+### 클래스 파일(.class) 저장 위치
+
+- 클래스나 인터페이스가 컴파일되면 `.class` 파일 생성
+- 클래스 파일은 패키지로 선언된 디렉터리에 저장
+
+### 패키지 선언
+
+소스 파일의 맨 앞에 컴파일 후 저장될 패키지 지정
+
+```java
+package 패키지명;
+```
+
+### 예시 1 - Tools 클래스 (경로명: UI.Tools)
+
+```java
+package UI; // Tools를 컴파일하여 UI 패키지(UI 디렉토리)에 저장할 것 지시
+
+public class Tools {
+    .........
+}
+```
+
+### 예시 2 - Line 클래스
+
+```java
+package Graphic; // Line 클래스를 Graphic 패키지에 저장
+
+import UI.Tools; // UI.Tools 클래스의 경로명 임포트
+
+public class Line extends Shape {
+    public void draw() {
+        Tools t = new Tools();
+    }
+}
+```
+
+### 디폴트 패키지
+
+- `package` 선언문이 없는 소스 파일 → 현재 디렉터리가 디폴트 패키지
+- 같은 디폴트 패키지 안의 클래스끼리는 `import` 없이 사용 가능 (5장까지 했던 방식)
+- 디폴트 패키지에 속해 있으면 다른 패키지를 사용할 수 없음
+- 실제 프로젝트에서는 거의 모든 클래스가 명시적으로 `package` 선언
+
+---
+
+## 3. 패키지 운영 방법
+
+- 패키지 이름은 도메인 기반으로 시작 (일반 관례)
+    - 형식: `com.회사이름.프로젝트명.기능명` → 충돌 방지 / 모듈별 분리
+- 기능/역할별로 하위 패키지를 구분: `utils`, `controller`, `service` 등
+- 디렉토리 구조와 `package` 선언을 정확히 일치해야 함
+- `import`는 필요한 만큼만, `*` 전체 import는 피하는 것이 좋음
+
+### 디렉토리 구조 생성 예시
+
+```bash
+src/
+└── com/
+    └── foo/
+        └── test/
+```
+
+### Bar.java
+
+```java
+package com.foo.test;
+
+public class Bar {
+    public static void main(String[] args) {
+        System.out.println("Hello, My Package!");
+    }
+}
+```
+
+파일 구조 예시
+
+```
+src
+├── com/foo/test/Bar.java
+├── App.java
+└── README.md
+```
+
+- Explorer 아래 "JAVA PROJECTS" 클릭 시 package 계층 구조 확인 가능
+- 사용자 정의 package를 만든 후 사용하려면 `import` 키워드 사용 (`src/com/example/utils/HelloUtil.java`, `src/com/example/Main.java` 형식)
+
+---
+
+## 4. 자바의 모듈화
+
+### 모듈화의 목적
+
+- Java 9부터 자바 API를 여러 모듈(99개 → 현재 70개)로 분할 (Java 8까지는 `rt.jar` 한 파일에 모든 API 저장)
+- 응용프로그램 실행 시 꼭 필요한 모듈들로만 실행 환경 구축
+- 메모리 자원이 열악한 소형 기기(IoT 장치 등)에도 자바 응용프로그램이 실행되고 성능 유지
+
+### 모듈의 개념 (Java 9 도입)
+
+- 패키지와 이미지 등 리소스를 담은 컨테이너
+- 모듈 파일(`.jmod`)로 저장
+
+### Java 8 vs Java 9 이후 구조
+
+| Java 8 | Java 9 이후 |
+|--------|-------------|
+| 패키지A, B, C (클래스 파일들) | 모듈N { 패키지A, B + 리소스 } / 모듈M { 패키지K, L + 리소스 } |
+
+### 자바 플랫폼의 모듈화
+
+- 자바 API의 모든 클래스가 여러 개의 모듈로 재구성
+- 모듈 파일은 JDK의 `jmods` 디렉터리에 저장하여 배포 (현재는 OpenJDK에 따라 다름)
+
+### 자바 모듈과 패키지 구조
+
+**java.desktop 모듈**
+
+- 하위 패키지: `applet`, `awt`, `beans`
+    - `awt` 하위: `color`, `datatransfer`, `dnd`, `event`, `font`, `geom`, `im(spi)`, `image(renderable)`, `print`
+    - `beans` 하위: `beancontext`
+
+**java.base 모듈**
+
+- 하위 패키지: `io`, `lang`, `math`, `time`, `text`, `nio`, `net`, `security`, `util`
+    - `lang` 하위: `annotation`, `instrument`, `management`, `ref`, `reflect`
+    - `nio` 하위: `channels(spi)`, `charset(spi)`
+    - `security` 하위: `acl`, `cert`, `spec`, `interfaces`
+    - `util` 하위: `concurrent(atomic, locks)`, `jar`, `logging`, `prefs`, `regex`, `spi`, `zip`
+
+**java.rmi 모듈**
+
+- 하위 패키지: `rmi` → `activation`, `dgc`, `registry`, `server`
+
+**java.sql 모듈**
+
+- 하위 패키지: `sql`
+
+---
+
+## 5. JDK의 주요 패키지
+
+| 패키지 | 설명 |
+|--------|------|
+| `java.lang` | 스트링, 수학 함수, 입출력 등 기본 클래스와 인터페이스. 자동으로 import됨 |
+| `java.util` | 날짜, 시간, 벡터, 해시맵 등 유틸리티 클래스와 인터페이스 제공 |
+| `java.io` | 키보드, 모니터, 프린터, 디스크 등에 입출력할 수 있는 클래스와 인터페이스 제공 |
+| `java.awt` | GUI 프로그램을 작성하기 위한 AWT 패키지 |
+| `javax.swing` | GUI 프로그램을 작성하기 위한 스윙 패키지 |
+
+---
+
+## 6. Object 클래스
+
+- 모든 자바 클래스는 반드시 `Object`를 상속받도록 자동 컴파일
+- 모든 클래스의 슈퍼 클래스
+- 모든 클래스가 상속받는 공통 메소드 포함
+
+| 메소드 | 설명 |
+|--------|------|
+| `boolean equals(Object obj)` | obj가 가리키는 객체와 현재 객체를 비교하여 같으면 true 리턴 |
+| `Class getClass()` | 현 객체의 런타임 클래스를 리턴 |
+| `int hashCode()` | 현 객체에 대한 해시 코드 값 리턴 |
+| `String toString()` | 현 객체에 대한 문자열 표현을 리턴 |
+| `void notify()` | 현 객체에 대해 대기하고 있는 하나의 스레드를 깨운다 |
+| `void notifyAll()` | 현 객체에 대해 대기하고 있는 모든 스레드를 깨운다 |
+| `void wait()` | 다른 스레드가 깨울 때까지 현재 스레드를 대기하게 한다 |
+
+---
+
+## 7. Wrapper 클래스
+
+- 자바의 기본 타입을 클래스화한 8개 클래스를 통칭
+- 용도: 객체만 사용할 수 있는 컬렉션 등에 기본 타입의 값을 넣기 위해 Wrapper 객체로 변환하여 사용
+
+| 기본 타입 | byte | short | int | long | char | float | double | boolean |
+|-----------|------|-------|-----|------|------|-------|--------|---------|
+| Wrapper 클래스 | Byte | Short | Integer | Long | Character | Float | Double | Boolean |
+
+### Integer 클래스 주요 메소드 (다른 Wrapper 클래스도 유사)
+
+| 메소드 | 설명 |
+|--------|------|
+| `static int bitCount(int i)` | 정수 i의 이진수 표현에서 1의 개수 리턴 |
+| `float floatValue()` | float 타입으로 값 리턴 |
+| `int intValue()` | int 타입으로 값 리턴 |
+| `long longValue()` | long 타입으로 값 리턴 |
+| `short shortValue()` | short 타입으로 값 리턴 |
+| `static int parseInt(String s)` | 스트링 s를 10진 정수로 변환한 값 리턴 |
+| `static int parseInt(String s, int radix)` | 스트링 s를 지정된 진법의 정수로 변환한 값 리턴 |
+| `static String toBinaryString(int i)` | 정수 i를 이진수 표현으로 변환한 스트링 리턴 |
+| `static String toHexString(int i)` | 정수 i를 16진수 표현으로 변환한 스트링 리턴 |
+| `static String toOctalString(int i)` | 정수 i를 8진수 표현으로 변환한 스트링 리턴 |
+| `static String toString(int i)` | 정수 i를 스트링으로 변환하여 리턴 |
+
+---
+
+## 8. 박싱과 언박싱
+
+- 박싱(Boxing): 기본 타입의 값 → Wrapper 객체로 변환
+- 언박싱(Unboxing): Wrapper 객체 → 기본 타입의 값으로 추출
+
+```java
+// 박싱
+Integer ten = Integer.valueOf(10);   // int 10 → Integer 객체 ten
+
+// 언박싱
+int n = ten.intValue();              // Integer 객체 ten → int n
+```
+
+- 자동 박싱 / 자동 언박싱: JDK 1.5부터 박싱과 언박싱이 자동으로 이루어지도록 컴파일
+
+```java
+Integer ten = 10;   // 자동 박싱. Integer ten = Integer.valueOf(10);로 자동 처리
+int n = ten;        // 자동 언박싱. int n = ten.intValue();로 자동 처리
+```
+
+---
+
+## 9. String 클래스
+
+### String의 생성과 특징
+
+- 자바에는 기본 데이터 타입에 `string` 없음 → String 클래스 제공
+- 스트링 리터럴(문자열 리터럴)은 String 객체로 처리됨
+
+```java
+String str1 = "abcd";
+
+char data[] = {'a', 'b', 'c', 'd'};
+String str2 = new String(data);
+String str3 = new String("abcd"); // str2와 str3은 모두 "abcd" 스트링
+```
+
+### 스트링 리터럴 vs new String()
+
+| 구분 | 스트링 리터럴 | new String() |
+|------|--------------|--------------|
+| 저장 위치 | JVM 내부 리터럴 테이블 | 힙(Heap) |
+| 공유 여부 | 공유됨 (같은 리터럴이면 동일 객체 참조) | 공유 안됨 (각각 독립 객체) |
+
+```java
+String a = "Hello";
+String b = "Java";
+String c = "Hello";              // a와 c는 동일한 리터럴 "Hello" 공유
+String d = new String("Hello");  // 힙에 독립 객체 생성
+String e = new String("Java");   // 힙에 독립 객체 생성
+String f = new String("Java");   // 힙에 독립 객체 생성 (e와 다른 객체)
+```
+
+### 스트링 비교 - equals()와 compareTo()
+
+스트링 비교에 == 연산자 절대 사용 금지
+
+```java
+String java = "Java";
+if(java.equals("Java")) // true
+```
+
+```java
+String java = "Java";
+String cpp = "C++";
+int res = java.compareTo(cpp);
+if(res == 0) System.out.println("the same");
+else if(res < 0) System.out.println(java + " < " + cpp);
+else System.out.println(java + " > " + cpp);
+// 결과: Java > C++
+```
+
+- `compareTo()`: 같으면 0, 이 문자열이 먼저 나오면 음수, 나중에 나오면 양수 리턴
+
+### 공백 제거 - trim()
+
+```java
+String a = " xyz\t";
+String b = a.trim();    // b = "xyz". 빈칸과 '\t' 제거됨
+```
+
+### String 활용 종합 예제
+
+```java
+package week10;
+
+public class Ex65StringEx {
+    public static void main(String[] args) {
+        String a = new String(" C#");
+        String b = new String(",C++ ");
+        System.out.println(a + "의 길이는 " + a.length());
+        System.out.println(a.contains("#"));
+        a = a.concat(b);
+        System.out.println(a);
+        a = a.trim();
+        System.out.println(a);
+        a = a.replace("C#", "Java");
+        System.out.println(a);
+        String[] s = a.split(",");
+
+        for(int i = 0; i < s.length; ++i) {
+            System.out.println("분리된 문자열" + i + ": " + s[i]);
+        }
+
+        a = a.substring(5);
+        System.out.println(a);
+        char c = a.charAt(2);
+        System.out.println(c);
+    }
+}
+```
+
+---
+
+## 10. StringBuffer 클래스
+
+- 가변 스트링을 다루는 클래스 (String과 달리 문자열 변경 가능)
+- 가변 크기의 버퍼를 가지고 있어 문자열 수정 가능
+- 문자열의 수정이 많은 작업에 적합
+
+```java
+StringBuffer sb = new StringBuffer("This");
+sb.append(" is pencil.");    // sb = "This is pencil."
+sb.insert(7, " my");         // sb = "This is my pencil."
+sb.replace(8, 10, "your");   // sb = "This is your pencil."
+System.out.println(sb);      // "This is your pencil." 출력
+```
+
+---
+
+## 11. StringTokenizer 클래스
+
+- 구분 문자(delimiter)를 기준으로 문자열을 분리하는 클래스
+- 토큰(token): 구분 문자로 분리된 문자열
+
+```java
+String query = "name=kitae&addr=seoul&age=21";
+StringTokenizer st = new StringTokenizer(query, "&");
+// 토큰1: "name=kitae"
+// 토큰2: "addr=seoul"
+// 토큰3: "age=21"
+
+int count = st.countTokens();       // 토큰 개수 알아내기. count = 3
+String token = st.nextToken();      // 다음 토큰 얻어내기. token = "name=kitae"
+```
+
+---
+
+## 12. Math 클래스
+
+- 기본 산술 연산 메소드를 제공하는 클래스
+- 모든 메소드는 static으로 선언 → 클래스 이름으로 호출 가능
+
+```java
+// Math.random(): 0.0 이상 1.0 미만의 실수 난수 발생
+// 1에서 100까지의 랜덤 정수 10개 발생
+for(int x = 0; x < 10; x++) {
+    int n = (int)(Math.random() * 100 + 1); // 1~100까지의 랜덤 정수 발생
+    System.out.println(n);
+}
+```
+
+```java
+// java.util.Random 클래스를 이용한 난수 발생
+Random r = new Random();
+int n = r.nextInt();        // 음수, 양수, 0 포함, 자바의 정수 범위 난수 발생
+int m = r.nextInt(100);     // 0에서 99 사이(0과 99 포함)의 정수 난수 발생
+```
+
+---
+
+## 13. 컬렉션(Collection)
+
+### 컬렉션의 개념
+
+- 요소(element)라고 불리는 가변 개수의 객체들의 저장소 (객체들의 컨테이너)
+- 요소의 개수에 따라 크기 자동 조절
+- 요소의 삽입, 삭제에 따른 요소의 위치 자동 이동
+
+| 구분 | 배열(array) | 컬렉션(collection) |
+|------|------------|-------------------|
+| 크기 | 고정 크기 이상의 객체 관리 불가 | 가변 크기, 객체 개수 염려 없음 |
+| 삭제 | 중간 객체 삭제 시 응용프로그램에서 자리를 옮겨야 함 | 삭제 시 컬렉션이 자동으로 자리 이동 |
+
+### 컬렉션 인터페이스와 클래스 구조
+
+**인터페이스**
+
+- `Collection` → `Set`, `List`, `Queue`
+- `Map<K, V>`
+
+**클래스**
+
+- `HashSet` (Set 인터페이스 구현)
+- `ArrayList` (List 인터페이스 구현)
+- `Vector` (List 인터페이스 구현)
+    - `Stack` (Vector 상속)
+- `LinkedList` (List, Queue 인터페이스 구현)
+- `HashMap<K, V>` (Map\<K, V\> 인터페이스 구현)
+
+### 컬렉션의 특징
+
+#### 1. 제네릭(Generics) 기법으로 구현
+
+- 특정 타입만 다루지 않고, 여러 종류의 타입으로 변신할 수 있도록 클래스나 메소드를 일반화시키는 기법
+- 클래스나 인터페이스 이름에 `<E>`, `<K>`, `<V>` 등 타입 매개변수 포함
+- 제네릭은 형판과 같은 개념: 클래스나 메소드를 찍어내듯이 생산할 수 있도록 일반화된 형판을 만드는 기법
+
+```java
+Vector<Integer> v = new Vector<Integer>(); // 정수만 다루는 벡터
+Vector<String> v2 = new Vector<String>();  // 문자열만 다루는 벡터
+```
+
+#### 2. 컬렉션의 요소는 객체만 가능
+
+```java
+Vector<int> v = new Vector<int>();         // 컴파일 오류. int는 사용 불가
+Vector<Integer> v = new Vector<Integer>(); // 정상 코드
+```
+
+---
+
+## 14. Vector\<E\>
+
+### Vector 내부 구조
+
+- `add()`를 이용하여 요소 삽입, `get()`을 이용하여 요소 검색
+
+```
+인덱스별 상태:
+0: Integer(5)
+1: Integer(4)
+2: Integer(-1)
+3: Integer(10)
+4, 5, 6: (비어 있음)
+```
+
+### Vector 예제 코드
+
+```java
+import java.util.Vector;
+
+public class Ex71VectorEx {
+    public static void main(String[] args) {
+        // 정수 값만 다루는 제네릭 벡터 생성
+        Vector<Integer> v = new Vector<Integer>();
+        v.add(5);   // 5 삽입
+        v.add(4);   // 4 삽입
+        v.add(-1);  // -1 삽입
+
+        // 벡터 중간에 삽입하기
+        v.add(2, 100); // 4와 -1 사이에 정수 100 삽입
+
+        System.out.println("벡터 내의 요소 객체 수 : " + v.size());
+        System.out.println("벡터의 현재 용량 : " + v.capacity());
+
+        // 모든 요소 정수 출력하기
+        for (int i = 0; i < v.size(); i++) {
+            int n = v.get(i); // 벡터의 i번째 정수
+            System.out.println(n);
+        }
+
+        // 벡터 속의 모든 정수 더하기
+        int sum = 0;
+        for (int i = 0; i < v.size(); i++) {
+            int n = v.elementAt(i); // 벡터의 i번째 정수
+            sum += n;
+        }
+
+        System.out.println("벡터에 있는 정수 합 : " + sum);
+    }
+}
+```
+
+### 코드 분석
+
+**벡터 생성 및 데이터 삽입**
+
+- `v.add(5)`: 순차적으로 데이터를 뒤에 추가
+- `v.add(2, 100)`: 특정 인덱스(2번)에 값을 삽입 → 기존 요소들은 뒤로 밀림
+
+**크기(Size)와 용량(Capacity)**
+
+- `v.size()`: 현재 실제로 저장된 요소의 개수 반환
+- `v.capacity()`: 현재 확보하고 있는 전체 메모리 공간의 크기 반환 (자동 증가)
+
+**데이터 접근**
+
+- `v.get(i)`: i번째 인덱스 요소 가져옴
+- `v.elementAt(i)`: `get(i)`와 동일, 이전 버전과의 호환성을 위해 남겨진 메서드
+- 오토박싱(Auto-boxing): 벡터에는 `Integer` 객체 저장, 꺼낼 때 자동으로 `int`로 변환
+
+**예상 출력 결과**
+
+```
+벡터 내의 요소 객체 수 : 4
+벡터의 현재 용량 : 10
+5
+4
+100
+-1
+벡터에 있는 정수 합 : 108
+```
+
+---
+
+## 15. ArrayList\<E\>
+
+### 주요 특징
+
+- 가변 크기 배열: 데이터 개수에 따라 크기 자동 조절
+- 제네릭 사용: `<E>` 부분에 저장할 요소의 타입 명시
+- 벡터와 기능은 거의 동일하나 스레드 동기화 없음
+
+### ArrayList vs Vector 비교
+
+| 항목 | ArrayList | Vector |
+|------|-----------|--------|
+| 동기화 여부 | 비동기화 (스레드 안전 X) | 동기화 (스레드 안전 O) |
+| 성능 | 빠름 (싱글 스레드에 적합) | 느림 (동기화로 인한 오버헤드) |
+| 기본 크기 증가 | 1.5배씩 증가 | 2배씩 증가 |
+| 도입 시기 | Java 1.2 (Collection Framework) | Java 1.0 (초기부터 존재) |
+| 사용 권장 여부 | 현대 개발에서 추천 | 특별한 이유 없다면 지양 |
+
+### 멀티스레드 환경에서의 대안
+
+- `synchronizedList`: 기존 ArrayList를 동기화된 리스트로 감싸서 사용
+- `CopyOnWriteArrayList`: 읽기 작업이 많고 쓰기 작업이 적은 멀티스레드 환경에서 높은 성능
+
+역사적 배경: Vector는 JDK 1.0의 Legacy 클래스. Java 1.2에서 컬렉션 프레임워크 표준화 후 ArrayList가 도입됨.
+
+---
+
+## 16. Iterator (이테레이터)
+
+### Iterator 인터페이스란?
+
+- 리스트 구조의 컬렉션에서 요소들을 순차적으로 검색하기 위해 사용하는 인터페이스
+- `Vector<E>`, `ArrayList<E>`, `LinkedList<E>` 등이 공통적으로 구현
+
+### Iterator 객체 얻어내기
+
+```java
+Vector<Integer> v = new Vector<Integer>();
+Iterator<Integer> it = v.iterator(); // Iterator 객체 얻기
+```
+
+### 주요 메서드
+
+| 메서드 | 설명 |
+|--------|------|
+| `hasNext()` | 다음에 방문할 요소가 남아있으면 true, 없으면 false 반환 |
+| `next()` | 다음 요소 객체를 반환 (실제 데이터를 꺼내오는 역할) |
+| `remove()` | next()로 읽어온 요소를 컬렉션에서 삭제 |
+
+### 반복문과 함께 사용
+
+```java
+while(it.hasNext()) { // 다음에 올 요소가 있는지 확인
+    int n = it.next(); // 있다면 요소 꺼내기
+    // ... 처리 로직
+}
+```
+
+### Iterator를 쓰는 이유
+
+- 통일된 사용법: 컬렉션 종류(Vector, ArrayList 등)가 바뀌어도 데이터 꺼내는 방식 동일
+- 안전성: 순회 도중 요소를 안전하게 삭제할 수 있는 `remove()` 제공. 일반 for문에서 인덱스로 접근하여 삭제 시 발생하는 오류 방지
+
+---
+
+## 17. HashMap\<K, V\>
+
+### 핵심 개념 - 키(Key)와 값(Value)의 쌍
+
+- K (Key): 데이터를 식별하기 위한 고유한 값 (예: "apple")
+- V (Value): 키와 연결되어 실제로 저장되는 데이터 (예: "사과")
+- 특정 값을 찾으려면 반드시 그에 연결된 키를 알아야 함
+- 내부적으로 해싱(Hashing) 알고리즘 사용 → 삽입과 검색 속도 매우 빠름
+
+### 기본 사용 예시
+
+```java
+// 1. String 타입의 키와 String 타입의 값을 가지는 해시맵 생성
+HashMap<String, String> h = new HashMap<String, String>();
+
+// 2. 데이터 삽입 (Key: "apple", Value: "사과")
+h.put("apple", "사과");
+
+// 3. 데이터 검색 (Key "apple"로 Value를 찾음)
+String kor = h.get("apple"); // kor 변수에는 "사과"가 저장됨
+```
+
+### 주요 메서드 총정리
+
+**데이터 관리 (추가, 삭제, 초기화)**
+
+| 메서드 | 설명 |
+|--------|------|
+| `put(K key, V value)` | 지정된 키와 값을 연결하여 HashMap에 저장 |
+| `remove(Object key)` | 지정된 키와 그에 매핑된 값을 삭제하고, 삭제된 값을 반환 |
+| `clear()` | HashMap 안에 있는 모든 요소를 한꺼번에 삭제 |
+
+**데이터 검색 및 확인**
+
+| 메서드 | 설명 |
+|--------|------|
+| `get(Object key)` | 키를 입력하면 그에 맞는 값을 리턴. 찾는 키가 없으면 null 리턴 |
+| `containsKey(Object key)` | 특정 키가 맵에 존재하는지 여부를 boolean으로 확인 |
+| `containsValue(Object value)` | 특정 값이 하나 이상 존재하는지 확인 |
+
+**상태 및 정보 확인**
+
+| 메서드 | 설명 |
+|--------|------|
+| `size()` | 현재 HashMap에 저장된 키-값 쌍의 총 개수 반환 |
+| `isEmpty()` | 맵이 비어 있는지 확인하여 비어 있으면 true 리턴 |
+
+**전체 데이터 탐색**
+
+| 메서드 | 설명 |
+|--------|------|
+| `keySet()` | 모든 키(Key)들만 따로 뽑아서 Set 컬렉션 형태로 리턴. for문이나 Iterator로 맵 전체 순회 시 유용 |
+
+### HashMap 주의사항
+
+- 키의 중복 불가: 같은 키로 `put` 수행 시 기존 값이 새로운 값으로 덮어쓰기 (값은 중복 가능)
+- 순서 보장 없음: 데이터를 넣은 순서대로 저장되지 않음. 순서가 중요하면 `LinkedHashMap` 사용
 ## 9주차 정리 (4월 29일)
 
 ---
