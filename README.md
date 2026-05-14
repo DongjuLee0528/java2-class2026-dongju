@@ -1,6 +1,548 @@
 # java2-class2026-dongju
 # 202430219 이동주
 
+## 11주차 정리 (5월 13일)
+
+---
+
+## 1. GUI (Graphical User Interface)
+
+GUI는 버튼, 창(Window), 메뉴, 텍스트박스 같은 그래픽 요소를 제공해서 사용자가 프로그램을 쉽게 사용할 수 있도록 하는 인터페이스다.
+
+- 마우스 클릭, 키보드 입력, 화면 시각적 조작 가능
+- 반대 개념: CLI(Command Line Interface) — 터미널에서 명령어 입력 방식
+- GUI 프로그램 예시: 계산기 앱, 메모장, 크롬 브라우저, 카카오톡 창
+
+자바에서는 대표적으로 **AWT**와 **Swing** 패키지를 사용한다.
+
+---
+
+## 2. AWT (Abstract Window Toolkit)
+
+자바 초창기 GUI 패키지. `import java.awt.*;` 로 사용한다.
+
+### 핵심 특징
+
+**① Heavy Weight Component (중량 컴포넌트)**
+운영체제(OS)의 실제 GUI 자원을 직접 사용한다. 자바가 직접 그리는 게 아니라 운영체제가 대신 그린다.
+
+**② 운영체제 의존적**
+OS마다 버튼 모양이 다르게 보일 수 있다. (Windows / Linux / Mac 전부 다름)
+
+**③ 속도는 빠름, 하지만 단점 존재**
+운영체제가 직접 그리므로 렌더링 속도는 빠르지만, 메모리 사용량이 크고 플랫폼 차이가 발생한다.
+
+### 요즘 AWT를 거의 안 쓰는 이유
+
+| 문제 | 설명 |
+|------|------|
+| OS 의존 | 화면 모양 달라짐 |
+| 무거움 | 자원 많이 사용 |
+| 유연성 부족 | 디자인 변경 어려움 |
+| 기능 제한 | 현대 GUI 개발에 부족 |
+
+현재는 대부분 **Swing** 또는 **JavaFX**를 사용한다.
+
+---
+
+## 3. Swing 패키지
+
+AWT를 기반으로 만든 자바 GUI 라이브러리. AWT 기능을 포함하면서 더 풍부한 GUI 기능을 제공하고, 현재 자바 GUI 표준처럼 사용된다.
+
+### 핵심 특징
+
+**① AWT 기반 라이브러리** — 기존 AWT를 확장한 형태
+
+**② 고급 컴포넌트 제공** — 메뉴, 테이블, 트리 구조, 탭 화면, 다중 텍스트 영역 등
+
+**③ 컴포넌트 이름 앞에 J 사용** — AWT 컴포넌트를 Swing 방식으로 다시 만든 것
+
+**④ Light Weight Component** — 운영체제 자원을 직접 사용하지 않고 자바 내부에서 GUI를 처리한다.
+- OS 의존성 감소, 플랫폼 독립성 증가
+- Windows / Mac / Linux에서 거의 동일한 화면 제공 가능
+
+### AWT vs Swing 비교
+
+| AWT | Swing |
+|-----|-------|
+| Heavy Weight | Light Weight |
+| OS가 그림 | 자바가 그림 |
+| 플랫폼 영향 큼 | 플랫폼 영향 적음 |
+| 기능 적음 | 기능 많음 |
+| 오래된 기술 | 현재 표준 수준 |
+
+---
+
+## 4. Swing 컴포넌트
+
+### 기본 입력 컴포넌트
+
+| 컴포넌트 | 역할 | 특징 |
+|---------|------|------|
+| JButton | 버튼 | 클릭 가능한 버튼 (로그인, 확인 등) |
+| JCheckBox | 다중 선택 | 여러 개 동시에 선택 가능 (약관 동의, 취미 선택 등) |
+| JRadioButton | 단일 선택 | 여러 개 중 하나만 선택 (성별, 결제 방식 등) |
+| JSlider | 값 조절 | 막대를 움직여 값 조절 (음량, 밝기 등) |
+| JTextField | 한 줄 입력 | 텍스트 한 줄 입력 (이름, 주소 등) |
+| JPasswordField | 비밀번호 입력 | 입력값이 * 또는 점으로 표시됨 |
+| JSpinner | 값 증가/감소 | 날짜, 수량 선택 등 |
+| JTextArea | 여러 줄 입력 | 긴 문장 입력 (게시글, 메모 등) |
+| JComboBox | 드롭다운 | 목록 중 하나 선택, 클릭 시 목록 펼쳐짐 |
+| JList | 목록 출력 | 여러 데이터를 리스트 형태로 표시 |
+
+### 고급 컴포넌트
+
+| 컴포넌트 | 역할 | 특징 |
+|---------|------|------|
+| JProgressBar | 진행 상태 표시 | 다운로드 진행률, 로딩 상태 등 |
+| JToolTip | 도움말 표시 | 마우스를 올렸을 때 설명 나타남 |
+| JScrollPane | 스크롤 기능 | 내용이 많을 때 세로/가로 스크롤바 생성 |
+| JMenu | 메뉴바 | 프로그램 상단 메뉴 (File, Edit, Save 등) |
+| JDialog | 대화상자 | 메인 창 위에 뜨는 경고창, 알림창 등 |
+| JApplet | 브라우저 실행 | 과거 웹에서 사용, 현재는 거의 사용 안 함 |
+| JFrame | 메인 창 | GUI 프로그램의 기본 창, 대부분의 시작점 |
+| JTable | 표 형태 데이터 | 행/열 구조, 데이터 수정 및 셀 단위 관리 가능 |
+| JTree | 계층 구조 데이터 | 파일 탐색기, 폴더 구조 등 펼치기/접기 가능 |
+| JEditorPane | HTML/문서 출력 | HTML 지원, URL 기반 문서 출력 가능 |
+| JTextPane | 스타일 적용 텍스트 | 글자 색상, 폰트 변경, 이미지 삽입 가능 |
+| JToolBar | 도구 모음 | 자주 쓰는 기능 버튼 모음 (IDE, 워드 등 상단 배치) |
+| JTabbedPane | 탭 화면 전환 | 하나의 창에서 여러 화면 관리 (브라우저 탭 등) |
+| JSplitPane | 화면 분할 | 창을 두 영역으로 나눔, 경계선 크기 조절 가능 |
+
+---
+
+## 5. GUI 패키지 계층 구조
+
+GUI 클래스들은 상속 구조로 연결되어 있다. 최상위는 `Object`에서 시작한다.
+
+### AWT 계층 흐름
+
+```
+Object
+└ Component    ← 모든 GUI 요소의 기본 클래스
+  └ Container  ← 다른 컴포넌트를 담을 수 있는 클래스
+```
+
+**AWT 주요 클래스**
+
+| 클래스 | 역할 |
+|--------|------|
+| Button | 버튼 |
+| Label | 글자 표시 |
+| Checkbox | 체크박스 |
+| Frame | 기본 창 |
+| Dialog | 대화상자 |
+| Panel | 컴포넌트 묶음 |
+
+### Swing 계층 흐름
+
+Swing 컴포넌트들은 대부분 `JComponent`를 상속받는다.
+
+```
+AWT → 기본 GUI 구조
+Swing → AWT 확장 + 고급 기능 추가 (대부분 J로 시작)
+```
+
+---
+
+## 6. 컨테이너와 컴포넌트
+
+### 컨테이너 (Container)
+
+다른 컴포넌트를 포함할 수 있는 GUI 객체. 버튼, 입력창, 체크박스 같은 것들을 담는 역할. 다른 컨테이너 안에 중첩 가능.
+
+| AWT 컨테이너 | Swing 컨테이너 |
+|-------------|--------------|
+| Panel | JPanel |
+| Frame | JFrame |
+| Applet | JApplet |
+| Dialog | JDialog |
+| Window | JWindow |
+
+### 컴포넌트 (Component)
+
+실제로 화면에 출력되는 GUI 요소 (버튼, 텍스트 입력창, 체크박스 등). 반드시 컨테이너 안에 포함되어야 화면에 출력 가능하고, 일반 컴포넌트는 다른 컴포넌트를 포함하지 못한다.
+
+- 모든 GUI 컴포넌트 기본 클래스: `java.awt.Component`
+- Swing 컴포넌트 기본 클래스: `javax.swing.JComponent`
+
+### 최상위 컨테이너
+
+다른 컨테이너 안에 들어가지 않아도 독립적으로 화면에 출력 가능한 컨테이너.
+- 대표: `JFrame`, `JDialog`, `JApplet`
+- 스스로 창(Window)을 생성 가능하고, GUI 프로그램 시작점 역할
+
+### 컨테이너/컴포넌트 포함 관계
+
+GUI 프로그램은 **컨테이너 안에 컴포넌트를 넣는 구조**다.
+
+```
+JFrame                  ← 최상위 컨테이너 (메인 창)
+└ JPanel                ← 중간 컨테이너 (컴포넌트 묶음)
+  ├ JLabel
+  ├ JTextField
+  ├ JCheckBox
+  └ JButton
+```
+
+---
+
+## 7. Swing 프레임 (JFrame)
+
+모든 Swing 컴포넌트를 담는 최상위 컨테이너. GUI 프로그램의 메인 창 역할.
+
+- `JFrame`을 상속받아 GUI 프로그램 구현 가능
+- 컴포넌트들은 JFrame 안에 있어야 화면 출력 가능
+- 프레임을 닫으면 내부 컴포넌트도 함께 사라짐
+
+### JFrame 기본 구성
+
+```
+JFrame
+├ Menu Bar      ← 메뉴들이 배치되는 공간 (File, Edit, Window 등)
+└ Content Pane  ← 실제 GUI 컴포넌트들이 올라가는 핵심 영역
+  ├ JButton
+  ├ JTextField
+  └ JCheckBox
+```
+
+---
+
+## 8. JFrame 클래스 상속으로 프레임 만들기
+
+Swing 프레임은 보통 `extends JFrame` 방식으로 제작한다.
+
+### 주요 메소드
+
+| 메소드 | 설명 |
+|--------|------|
+| `setTitle("제목")` | 프레임 상단 제목 표시줄 설정 |
+| `setSize(300, 300)` | 프레임 크기 설정 (가로, 세로 / 픽셀 단위) |
+| `setVisible(true)` | 프레임을 실제 화면에 출력 (없으면 창이 안 보임) |
+| `setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)` | X 버튼 클릭 시 프로그램 완전 종료 |
+
+### 기본 예제 코드
+
+```java
+package week11;
+import javax.swing.JFrame;
+
+public class Java0513 extends JFrame {
+
+    public Java0513() {
+        setTitle("300x300 스윙 프레임 만들기");
+        setSize(300, 300);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new Java0513();
+    }
+}
+```
+
+전체 실행 흐름: `main()` → 객체 생성 → 생성자 호출 → 제목 설정 → 크기 설정 → 화면 출력
+
+---
+
+## 9. Swing 응용프로그램에서 main()의 역할
+
+`main()`은 프로그램 실행 시작 역할만 수행하고, 실제 GUI 작업은 프레임 클래스 내부에서 처리하는 것이 좋다.
+
+- 버튼 생성, 이벤트 처리, 화면 배치 등을 `main()`에 전부 넣으면 코드 관리가 어려워짐
+- 실무에서는 `new MyFrame();` 형태로 바로 생성 (변수 저장 불필요)
+- `frame` 변수 선언 후 미사용 시 warning 발생 — 객체는 생성했지만 이후에 참조하지 않기 때문
+- **SwingUtilities.invokeLater()** — GUI를 안전하게 실행하기 위한 코드. 이벤트 처리 스레드(EDT)에서 GUI를 실행해 Swing GUI 안정성을 높인다. 현재 단계에서는 "GUI 실행 전용 코드" 정도로 이해하면 충분
+
+---
+
+## 10. 컨텐트팬 (Content Pane)에 컴포넌트 붙이기
+
+Swing에서는 컴포넌트를 **컨텐트팬(Content Pane)** 에 붙여서 화면에 출력한다.
+
+### 타이틀 설정 방법
+
+```java
+super("타이틀문자열");    // 부모(JFrame) 생성자 호출하며 제목 설정
+setTitle("타이틀문자열"); // 프레임 제목 설정
+```
+
+### 컨텐트팬 얻기 및 컴포넌트 추가
+
+```java
+Container contentPane = getContentPane(); // 현재 JFrame의 컨텐트팬 가져오기
+contentPane.add(button);                  // 버튼을 컨텐트팬에 추가
+```
+
+### JDK 1.5 전후 방식 비교
+
+| 구분 | 방식 | 코드 예시 |
+|------|------|----------|
+| JDK 1.5 이전 | ContentPane 객체 직접 사용 | `getContentPane().add(new JButton("OK"))` |
+| JDK 1.5 이후 | JFrame에 바로 add() | `add(new JButton("OK"))` |
+
+JDK 1.5 이후에는 `frame.add()`를 사용해도 내부적으로 ContentPane에 자동 추가된다. 구조 이해를 위해서는 ContentPane을 직접 다루는 방식을 익히는 것이 좋다.
+
+전체 흐름: `JFrame 생성` → `ContentPane 얻기` → `컴포넌트 생성` → `add()로 부착` → `화면 출력`
+
+### 예제 코드 비교
+
+**Ex82ContentPaneEx.java** — JDK 1.5 이전 스타일 (ContentPane 직접 다루기)
+
+```java
+import javax.swing.*;
+import java.awt.*;
+
+public class Ex82ContentPaneEx extends JFrame {
+
+    public Ex82ContentPaneEx() {
+        setTitle("ContentPane과 JFrame 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container contentPane = getContentPane();
+        contentPane.setBackground(Color.ORANGE);
+        contentPane.setLayout(new FlowLayout());
+        contentPane.add(new JButton("OK"));
+        contentPane.add(new JButton("Cancel"));
+        contentPane.add(new JButton("Ignore"));
+
+        setSize(300, 150);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new Ex82ContentPaneEx();
+    }
+}
+```
+
+**Ex821ContentPaneEx.java** — JDK 1.5 이후 스타일 (JFrame에 직접 add)
+
+```java
+import javax.swing.*;
+import java.awt.*;
+
+public class Ex821ContentPaneEx extends JFrame {
+
+    public Ex821ContentPaneEx() {
+        setTitle("ContentPane과 JFrame 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        getContentPane().setBackground(Color.ORANGE);
+        getContentPane().setLayout(new FlowLayout());
+        add(new JButton("OK"));
+        add(new JButton("Cancel"));
+        add(new JButton("Ignore"));
+
+        setSize(300, 150);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new Ex821ContentPaneEx();
+    }
+}
+```
+
+두 코드는 결과 화면이 거의 동일하고, 버튼이 붙는 실제 위치는 둘 다 ContentPane이다. 현재는 코드가 간결한 Ex821 방식(JDK 1.5 이후)을 더 많이 사용한다.
+
+---
+
+## 11. Swing 응용프로그램 종료
+
+- **프로그램 내부에서 강제 종료:** `System.exit(0);`
+- **X 버튼 클릭 시 프로그램까지 종료:** `setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);`
+
+기본적으로는 프레임 창만 닫히고(invisible 상태), JVM 자체는 계속 실행된다. `setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)`를 설정해야 프레임 종료 시 JVM도 함께 종료된다.
+
+`setVisible(true)`를 다시 호출하면 이전 상태 그대로 창을 다시 출력할 수 있다.
+
+흐름: `X 버튼 클릭` → `프레임 종료` → `EXIT_ON_CLOSE 확인` → `JVM 종료` → `프로그램 종료`
+
+---
+
+## 12. 배치 관리자 (Layout Manager)
+
+컴포넌트를 화면에 어떤 방식으로 배치할지 결정하는 시스템. 모두 `java.awt` 패키지에 구현되어 있다.
+
+### 종류 비교
+
+| 배치 관리자 | 방식 | 느낌 |
+|------------|------|------|
+| FlowLayout | 왼쪽→오른쪽 순서 배치, 공간 부족 시 자동 줄바꿈 | 문장 입력처럼 흐르듯 배치 |
+| BorderLayout | 화면을 NORTH/SOUTH/EAST/WEST/CENTER 5개 영역 분할 | 동서남북 + 중앙 구조 |
+| GridLayout | 격자(Grid) 형태, 모든 칸 크기 동일, 순서대로 배치 | 표(Table) 형태 |
+| CardLayout | 카드를 겹쳐놓은 형태, 한 번에 하나의 화면만 보임 | 슬라이드 넘기는 구조 |
+
+---
+
+## 13. FlowLayout
+
+```java
+FlowLayout()                                   // 기본: 가운데 정렬, hGap=5, vGap=5
+FlowLayout(int align, int hGap, int vGap)      // 정렬 방식, 가로/세로 간격 직접 지정
+```
+
+- `align`: `FlowLayout.LEFT` / `FlowLayout.RIGHT` / `FlowLayout.CENTER` (기본값)
+- `hGap`: 좌우 컴포넌트 사이 간격 (픽셀, 기본값 5)
+- `vGap`: 위아래 컴포넌트 사이 간격 (픽셀, 기본값 5)
+
+```java
+package week11;
+import javax.swing.*;
+import java.awt.*;
+
+public class Java8_3 extends JFrame {
+
+    public Java8_3() {
+        setTitle("FlowLayout 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 40));
+        contentPane.add(new JButton("add"));
+        contentPane.add(new JButton("sub"));
+        contentPane.add(new JButton("mul"));
+        contentPane.add(new JButton("div"));
+        contentPane.add(new JButton("Calculate"));
+
+        setSize(300, 200);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new Java8_3();
+    }
+}
+```
+
+---
+
+## 14. BorderLayout
+
+```java
+BorderLayout()                        // 기본: hGap=0, vGap=0
+BorderLayout(int hGap, int vGap)      // 컴포넌트 간 간격 지정
+```
+
+- `add(Component comp, Object index)` 로 배치 위치 지정
+- 위치 지정: `BorderLayout.EAST` / `WEST` / `SOUTH` / `NORTH` / `CENTER`
+- 각 위치에 하나의 컴포넌트만 배치 가능 (같은 위치에 추가하면 기존 교체)
+- CENTER 영역은 남은 공간을 자동으로 가장 크게 차지 → 메인 화면 영역으로 많이 사용
+
+```java
+package week11;
+import javax.swing.*;
+import java.awt.*;
+
+public class Java8_4 extends JFrame {
+
+    public Java8_4() {
+        setTitle("BorderLayout 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout(30, 20));
+
+        add(new JButton("Calculate"), BorderLayout.CENTER);
+        add(new JButton("add"), BorderLayout.NORTH);
+        add(new JButton("sub"), BorderLayout.SOUTH);
+        add(new JButton("mul"), BorderLayout.EAST);
+        add(new JButton("div"), BorderLayout.WEST);
+
+        setSize(300, 200);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new Java8_4();
+    }
+}
+```
+
+---
+
+## 15. GridLayout
+
+```java
+GridLayout(int rows, int cols)                     // 행/열 개수 지정
+GridLayout(int rows, int cols, int hGap, int vGap) // 간격 포함
+```
+
+- 모든 칸 크기가 동일하고 컴포넌트 크기도 동일하게 맞춰짐
+- 배치 순서: 왼쪽→오른쪽, 위→아래 (문서 읽는 순서)
+
+```java
+container.setLayout(new GridLayout(4, 3, 5, 5)); // 4행 3열, 간격 5픽셀
+```
+
+```java
+package week11;
+import java.awt.*;
+import javax.swing.*;
+
+public class Java8_5 extends JFrame {
+
+    public Java8_5() {
+        super("GridLayout 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new GridLayout(1, 10));
+
+        for (int i = 0; i < 10; i++) {
+            String text = Integer.toString(i);
+            JButton button = new JButton(text);
+            contentPane.add(button);
+        }
+
+        setSize(500, 200);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new Java8_5();
+    }
+}
+```
+
+---
+
+## 16. 배치 관리자 없는 컨테이너
+
+`container.setLayout(null);` 로 배치 관리자를 제거하면 개발자가 직접 컴포넌트의 위치와 크기를 지정해야 한다.
+
+**필요한 경우:**
+- 컴포넌트 위치/크기를 직접 정하고 싶을 때
+- 게임처럼 키보드/마우스 입력이나 시간 변화에 따라 위치가 계속 변할 때
+- 컴포넌트를 서로 겹쳐서 출력할 때
+
+**주의사항:** 배치 관리자가 없으면 `setSize()`, `setLocation()` 또는 `setBounds()`로 직접 위치와 크기를 설정해야 한다. 설정하지 않으면 크기가 0이 되어 화면에 보이지 않을 수 있다.
+
+흐름: `setLayout(null)` → 자동 배치 제거 → 개발자가 직접 좌표로 위치 지정 → 컴포넌트 출력
+
+---
+
+## 시험 포인트
+
+**반드시 암기할 AWT 특징**
+- Heavy Weight Component
+- 운영체제가 직접 그림
+- OS 의존적
+- 속도 빠름, 자원 많이 사용
+
+**자주 나오는 문제:**
+> "AWT가 Heavy Weight인 이유를 설명하시오."
+
+**핵심 답:** 운영체제의 GUI 자원을 직접 사용하기 때문이다.
+
+**한 줄 요약**
+```
+AWT   = 운영체제 기반 GUI → 빠르지만 무겁고 OS 의존적
+Swing = 자바 기반 GUI    → 더 유연하고 현재 주로 사용
+```
+
+---
 ## 10주차 정리 (5월 6일)
 
 ---
