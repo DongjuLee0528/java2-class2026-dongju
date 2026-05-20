@@ -1,6 +1,336 @@
 # java2-class2026-dongju
 # 202430219 이동주
 
+## 12주차 정리 (5월 20일)
+
+---
+
+## 1. 중간고사 풀이 — 배수 찾기 프로그램
+
+시작 수와 끝 수를 입력받고, 그 사이에 있는 특정 수의 배수 개수와 목록을 출력하는 프로그램
+
+### 핵심 흐름
+
+1. `data[0]` — 시작 수 저장
+2. `data[1]` — 끝 수 저장
+3. `data[2]` — 찾을 배수 저장
+4. 시작 수가 끝 수보다 크면 두 값 교환 (swap)
+5. 범위 안에서 배수 개수(cnt) 계산
+6. 배수 개수만큼 배열 생성
+7. 배수들을 배열에 저장
+8. 결과 출력
+
+### 전체 코드
+
+```java
+public class Midterm {
+    public static void main(String[] args) {
+        java.util.Scanner input = new java.util.Scanner(System.in);
+        int[] data = new int[3];
+
+        System.out.print("시작 수를 입력하세요: ");
+        data[0] = input.nextInt();
+
+        System.out.print("끝 수를 입력하세요: ");
+        data[1] = input.nextInt();
+
+        System.out.print("찾고자 하는 배수를 입력하세요: ");
+        data[2] = input.nextInt();
+
+        if (data[0] > data[1]) {
+            int swap = data[0];
+            data[0] = data[1];
+            data[1] = swap;
+        }
+
+        int from = data[0], to = data[1], num = data[2];
+        int cnt = 0;
+
+        for (int i = from; i <= to; i++) {
+            if (i % num == 0) cnt++;
+        }
+
+        int[] arr = new int[cnt];
+        int idx = 0;
+        for (int i = from; i <= to; i++) {
+            if (i % num == 0) arr[idx++] = i;
+        }
+
+        System.out.println(from + "에서 " + to + "까지 사이의 " + num + "의 배수는 " + cnt + "개입니다.");
+        System.out.println("그 수는 다음과 같습니다.");
+        System.out.print("[");
+        for (int val : arr) System.out.print(val + " ");
+        System.out.println("]");
+
+        input.close();
+    }
+}
+```
+
+### 포인트 정리
+
+| 코드 | 의미 |
+|------|------|
+| `if (data[0] > data[1])` | 입력 순서 무관하게 항상 작은 수부터 탐색 |
+| `i % num == 0` | i를 num으로 나눈 나머지가 0 → num의 배수 |
+| cnt 먼저 계산 후 배열 생성 | 배열 크기를 정확히 맞추기 위해 2번 순회 |
+
+---
+
+## 2. 이벤트 기반 프로그래밍 (Event-Driven Programming)
+
+프로그램의 흐름이 **이벤트 발생 여부에 따라 결정되는 방식**
+
+### 일반 프로그램 vs 이벤트 기반 프로그램
+
+| 구분 | 일반 프로그램 (배치 처리) | 이벤트 기반 프로그램 |
+|------|------------------------|-------------------|
+| 실행 방식 | 개발자가 순서 결정, 순차 실행 | 이벤트 발생 시에만 코드 실행 |
+| 흐름 결정 | 개발자 | 사용자 (일부) |
+| 예시 | 1번→2번→3번 실행 | 버튼 클릭 → 코드 실행 |
+
+### 이벤트 종류
+
+| 분류 | 예시 |
+|------|------|
+| 사용자 입력 이벤트 | 마우스 클릭, 드래그, 키보드 입력 |
+| 시스템/외부 이벤트 | 센서 입력, 네트워크 데이터 수신, 다른 프로그램 메시지 |
+
+### GUI 프로그램과 이벤트 기반
+
+GUI 프로그램은 거의 전부 이벤트 기반 — Java Swing / AWT, Android, Visual Basic, C# GUI, MFC
+
+### 자바 GUI 라이브러리
+
+| 라이브러리 | 설명 |
+|-----------|------|
+| AWT | 자바 초기 GUI 라이브러리 |
+| Swing | AWT를 확장한 GUI 라이브러리. 더 발전된 형태 |
+
+---
+
+## 3. 이벤트 객체 (Event Object)
+
+- 발생한 이벤트에 관한 정보를 가진 객체
+- 이벤트 리스너에 전달되어, 리스너 코드가 이벤트 상황을 파악할 수 있게 함
+
+### 이벤트 객체가 포함하는 정보
+
+- 이벤트 종류와 이벤트 소스
+- 이벤트가 발생한 화면 좌표 및 컴포넌트 내 좌표
+- 이벤트가 발생한 버튼이나 메뉴 아이템의 문자열
+- 클릭된 마우스 버튼 번호 및 마우스의 클릭 횟수
+- 키의 코드 값과 문자 값
+- 체크박스, 라디오버튼 등의 체크 상태
+
+### 이벤트 소스 알아내는 메소드
+
+```java
+Object getSource()
+// 발생한 이벤트의 소스 컴포넌트 리턴
+// Object 타입으로 리턴 → 캐스팅하여 사용
+// 모든 이벤트 객체에 적용 가능
+```
+
+### 이벤트 객체 계층 & 주요 메소드
+
+| 클래스 | 주요 메소드 |
+|--------|-----------|
+| EventObject | `getSource()` |
+| ActionEvent | `getActionCommand()` |
+| InputEvent | `getModifiers()` |
+| MouseEvent | `getButton()`, `getClickCount()`, `getPoint()`, `getX()`, `getY()` |
+| KeyEvent | `getKeyChar()`, `getKeyCode()`, `getKeyText()` |
+| ItemEvent | `getItem()`, `getStateChange()` |
+
+---
+
+## 4. 이벤트 객체 · 소스 · 발생 경우
+
+| 이벤트 객체 | 이벤트 소스 | 발생하는 경우 |
+|------------|-----------|-------------|
+| ActionEvent | JButton | 마우스나 `<Enter>` 키로 버튼 선택 |
+| ActionEvent | JMenuItem | 메뉴 아이템 선택 |
+| ActionEvent | JTextField | 텍스트 입력 중 `<Enter>` 키 입력 |
+| ItemEvent | JCheckBox | 체크박스의 선택 혹은 해제 |
+| ItemEvent | JRadioButton | 라디오 버튼의 선택 상태가 변할 때 |
+| ItemEvent | JCheckBoxMenuItem | 체크박스 메뉴 아이템의 선택 혹은 해제 |
+| ListSelectionEvent | JList | 리스트에 선택된 아이템이 변경될 때 |
+| KeyEvent | Component | 키가 눌러지거나 눌러진 키가 떼어질 때 |
+| MouseEvent | Component | 마우스 버튼 누름/뗌/클릭/올라감/내려감/드래그/이동 |
+| FocusEvent | Component | 컴포넌트가 포커스를 받거나 잃을 때 |
+| WindowEvent | Window | 윈도우 활성화/비활성화/아이콘화/열기/닫기/종료 |
+| ComponentEvent | Component | 컴포넌트가 사라지거나 나타나거나 이동/크기 변경 시 |
+| ContainerEvent | Container | Container에 컴포넌트 추가 혹은 삭제 시 |
+
+---
+
+## 5. 리스너 인터페이스 (Listener Interface)
+
+- **이벤트 리스너** : 이벤트를 처리하는 자바 프로그램 코드, 클래스로 작성
+- 자바의 리스너 인터페이스(interface)를 상속받아 구현
+- 리스너 인터페이스의 **모든 추상 메소드 구현** 필수
+
+### 주요 리스너 인터페이스
+
+| 리스너 인터페이스 | 설명 | 주요 메소드 |
+|----------------|------|-----------|
+| ActionListener | 버튼 클릭 이벤트 처리 | `actionPerformed(ActionEvent e)` |
+| MouseListener | 마우스 조작 이벤트 처리 | `mousePressed`, `mouseReleased`, `mouseClicked`, `mouseEntered`, `mouseExited` |
+
+### ActionListener 인터페이스
+
+```java
+interface ActionListener {
+    public void actionPerformed(ActionEvent e);
+    // Action 이벤트 발생시 호출됨
+}
+```
+
+### MouseListener 인터페이스
+
+```java
+interface MouseListener {
+    public void mousePressed(MouseEvent e);   // 버튼이 눌러지는 순간 호출
+    public void mouseReleased(MouseEvent e);  // 눌러진 버튼이 떼어지는 순간 호출
+    public void mouseClicked(MouseEvent e);   // 마우스가 클릭되는 순간 호출
+    public void mouseEntered(MouseEvent e);   // 컴포넌트 위에 올라가는 순간 호출
+    public void mouseExited(MouseEvent e);    // 컴포넌트 위에서 내려오는 순간 호출
+}
+```
+
+---
+
+## 6. 이벤트 리스너 작성 과정
+
+### Step 1. 이벤트와 리스너 선택
+
+| 이벤트 | 이벤트 리스너 |
+|--------|-------------|
+| ActionEvent | ActionListener |
+
+### Step 2. 이벤트 리스너 클래스 작성
+
+```java
+class MyActionListener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+        JButton b = (JButton) e.getSource(); // 클릭된 버튼 가져오기
+        if (b.getText().equals("Action"))
+            b.setText("액션");
+        else
+            b.setText("Action");
+    }
+}
+```
+
+### Step 3. 이벤트 리스너 등록
+
+```java
+MyActionListener listener = new MyActionListener(); // 리스너 인스턴스 생성
+btn.addActionListener(listener);                    // 리스너 등록
+```
+
+> 형식: `component.addXXXListener(listener)` — xxx는 이벤트 명
+
+---
+
+## 7. 이벤트 리스너 작성 3가지 방법
+
+| 작성 방법 | 설명 | 특징 |
+|----------|------|------|
+| 독립 클래스 | 이벤트 리스너를 완전한 별도 클래스로 작성 | 여러 곳에서 재사용할 때 적합 |
+| 내부 클래스 (inner class) | 클래스 안에 멤버처럼 클래스 작성 | 특정 클래스에서만 사용할 때 적합 |
+| 익명 클래스 (anonymous class) | 클래스 이름 없이 간단히 작성 | 리스너 코드가 간단한 경우 적합 |
+
+---
+
+## 8. 방법 1 — 독립 클래스로 작성
+
+```java
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class IndepClassListener extends JFrame {
+    public IndepClassListener() {
+        setTitle("Action 이벤트 리스너 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container c = getContentPane();
+        c.setLayout(new FlowLayout());
+
+        JButton btn = new JButton("Action");
+        btn.addActionListener(new Ex91MyActionListener()); // 독립 리스너 등록
+        c.add(btn);
+
+        setSize(250, 120);
+        setVisible(true);
+    }
+    public static void main(String[] args) {
+        new IndepClassListener();
+    }
+}
+
+// 독립 클래스로 이벤트 리스너 작성
+class Ex91MyActionListener implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton b = (JButton) e.getSource();
+        if (b.getText().equals("Action"))
+            b.setText("액션");
+        else
+            b.setText("Action");
+    }
+}
+```
+
+### 구성 요소 분석
+
+| 구성 요소 | 설명 |
+|----------|------|
+| `JFrame` 상속 | 윈도우 창 생성 |
+| `JButton` | 버튼 생성 |
+| `ActionListener` | 버튼 클릭 이벤트 처리 인터페이스 |
+| `actionPerformed()` | 버튼 클릭 시 자동 호출되는 메소드 |
+| `getSource()` | 이벤트가 발생한 객체 반환 |
+| `setText()` | 버튼 문자열 변경 |
+
+### 독립 클래스 방식 특징
+
+- 리스너 클래스를 별도로 작성
+- 여러 컴포넌트에서 **재사용 가능**
+- 클래스 수가 많아질 수 있음
+
+---
+
+## 9. 방법 2 — 익명 클래스(Anonymous Class)로 작성
+
+- 이름 없는 클래스
+- **클래스 선언 + 인스턴스 생성을 한 번에** 수행
+- 메소드 개수가 1~2개인 리스너에 주로 사용 (ActionListener, ItemListener)
+
+### 형식
+
+```java
+new 슈퍼클래스이름(생성자인자들) {
+    // 익명 클래스의 멤버 구현
+};
+```
+
+### 이름 있는 클래스 vs 익명 클래스 비교
+
+| 이름 있는 클래스 | 익명 클래스 |
+|----------------|-----------|
+| `class MyActionListener implements ActionListener { public void actionPerformed(ActionEvent e) { ... } }` | 클래스 정의 없음 |
+| `b.addActionListener(new MyActionListener());` | `b.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent e) { ... } });` |
+
+### 익명 클래스 특징
+
+- 클래스 이름이 없음
+- 클래스 작성과 객체 생성을 **동시에** 수행
+- 코드가 짧고 간단함
+- **재사용에는 부적합**
+
 ## 11주차 정리 (5월 13일)
 
 ---
