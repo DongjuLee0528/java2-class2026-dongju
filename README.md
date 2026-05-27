@@ -1,6 +1,582 @@
 # java2-class2026-dongju
 # 202430219 이동주
 
+## 13주차 정리 (5월 27일)
+
+---
+
+## 1. 어댑터 클래스 (Adapter Class)
+
+이벤트 리스너 구현 시 인터페이스의 모든 추상 메소드를 구현해야 하는 부담이 있다.
+어댑터 클래스는 리스너의 모든 메소드를 미리 빈 구현으로 제공하는 클래스로, JDK에서 기본 제공한다.
+필요한 메소드만 선택해서 오버라이딩하면 된다.
+
+### 장점
+
+- 필요한 메소드만 구현 가능
+- 코드 길이 감소 및 가독성 향상
+- 추상 메소드가 여러 개인 리스너에서 주로 사용
+- 추상 메소드가 1개뿐인 리스너(`ActionListener`, `ItemListener` 등)는 Adapter 클래스 없음
+
+### JDK 제공 어댑터 클래스 목록
+
+| 리스너 인터페이스 | 대응 어댑터 클래스 |
+|---|---|
+| ActionListener | 없음 |
+| ItemListener | 없음 |
+| KeyListener | KeyAdapter |
+| MouseListener | MouseAdapter |
+| MouseMotionListener | MouseMotionAdapter 또는 MouseAdapter |
+| FocusListener | FocusAdapter |
+| TextListener | 없음 |
+| WindowListener | WindowAdapter |
+| AdjustmentListener | 없음 |
+| ComponentListener | ComponentAdapter |
+| ContainerListener | ContainerAdapter |
+
+### MouseAdapter 특징
+
+`MouseAdapter`는 세 리스너의 기능을 모두 포함한다.
+
+- **MouseListener** 메소드: `mousePressed()`, `mouseReleased()`, `mouseClicked()`, `mouseEntered()`, `mouseExited()`
+- **MouseMotionListener** 메소드: `mouseDragged()`, `mouseMoved()`
+- **MouseWheelListener** 메소드: `mouseWheelMoved()`
+
+---
+
+## 2. 예제 9-5: MouseAdapter 사용
+
+```java
+package week13;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class MouseAdapterEx2 extends JFrame {
+
+    private JLabel la = new JLabel("Hello");
+
+    public MouseAdapterEx2() {
+        setTitle("Mouse 이벤트 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container c = getContentPane();
+        c.addMouseListener(new Ex95MyMouseAdapter());
+        c.setLayout(null);
+
+        la.setSize(50, 20);
+        la.setLocation(30, 30);
+        c.add(la);
+
+        setSize(200, 200);
+        setVisible(true);
+    }
+
+    class Ex95MyMouseAdapter extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            int x = e.getX();
+            int y = e.getY();
+            la.setLocation(x, y);
+        }
+    }
+
+    public static void main(String[] args) {
+        new MouseAdapterEx2();
+    }
+}
+```
+
+### 코드 분석
+
+| 코드 | 설명 |
+|---|---|
+| `MouseAdapter` 상속 | 필요한 `mousePressed()`만 오버라이딩 |
+| `e.getX()`, `e.getY()` | 클릭한 위치의 x, y 좌표 반환 |
+| `la.setLocation(x, y)` | 레이블 위치를 클릭 위치로 이동 |
+
+**실행 결과**: 창을 클릭하면 `"Hello"` 문자열이 클릭한 위치로 이동
+
+---
+
+## 3. Key 이벤트와 포커스
+
+키보드 입력 시 다음 세 가지 경우에 Key 이벤트가 발생한다.
+
+1. 키를 **누르는 순간**
+2. 누른 키를 **떼는 순간**
+3. **Unicode 키**의 경우에만 추가로 `keyTyped` 이벤트 발생
+
+### 포커스 (Focus)
+
+키 이벤트는 현재 포커스를 가진 컴포넌트가 독점한다.
+
+```java
+component.setFocusable(true);  // 포커스 받을 수 있도록 설정
+component.requestFocus();       // 포커스 강제 지정
+```
+
+### KeyListener 3개 메소드
+
+| 메소드 | 발생 시점 |
+|---|---|
+| `keyPressed(KeyEvent e)` | 키를 누르는 순간 (가장 먼저 실행) |
+| `keyTyped(KeyEvent e)` | Unicode 키 입력 시 (문자 입력) |
+| `keyReleased(KeyEvent e)` | 누른 키를 떼는 순간 |
+
+**실행 순서**: `keyPressed()` → `keyTyped()` → `keyReleased()`
+
+키 이벤트 리스너 등록:
+```java
+component.addKeyListener(myKeyListener);
+```
+
+### 유니코드 키 vs 기능 키
+
+| 구분 | 예시 | 발생 이벤트 |
+|---|---|---|
+| Unicode 키 (문자 키) | A~Z, a~z, 0~9, !, @ | `keyPressed` → `keyTyped` → `keyReleased` |
+| 기능 키 (비문자 키) | F1~F24, Home, Up, Ctrl, Shift | `keyPressed` → `keyReleased` (keyTyped 없음) |
+
+---
+
+## 4. 가상 키 (Virtual Key)
+
+`KeyEvent` 클래스에 상수로 선언된 키 코드값. `getKeyCode()`와 함께 사용한다.
+
+| 종류 | 상수 예시 |
+|---|---|
+| 숫자 키 | `VK_0` ~ `VK_9` |
+| 알파벳 키 | `VK_A` ~ `VK_Z` |
+| 기능 키 | `VK_F1` ~ `VK_F24` |
+| 특수 키 | `VK_HOME`, `VK_END`, `VK_PGUP`, `VK_PGDN` |
+| 방향 키 | `VK_LEFT`, `VK_RIGHT`, `VK_UP`, `VK_DOWN` |
+| 제어 키 | `VK_CONTROL`, `VK_SHIFT`, `VK_ALT`, `VK_TAB` |
+
+### 키 판별 메소드 비교
+
+| 메소드 | 반환 타입 | 용도 |
+|---|---|---|
+| `getKeyChar()` | `char` | 문자 키 판별 (Unicode 문자 비교) |
+| `getKeyCode()` | `int` | 모든 키 판별 (가상 키 상수와 비교) |
+
+```java
+// 문자 키 판별
+if (e.getKeyChar() == 'q') { System.exit(0); }
+
+// 기능 키 판별
+if (e.getKeyCode() == KeyEvent.VK_F5) { System.exit(0); }
+```
+
+---
+
+## 5. 예제 9-6: 문자 키로 배경색 변경
+
+```java
+package week13;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Ex96KeyCharEx extends JFrame {
+
+    private JLabel la = new JLabel("<Enter>키로 배경색이 바뀝니다");
+
+    public Ex96KeyCharEx() {
+        super("KeyListener의 문자 키 입력 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container c = getContentPane();
+        c.setLayout(new FlowLayout());
+        c.add(la);
+        c.addKeyListener(new MyKeyListener());
+
+        setSize(250, 150);
+        setVisible(true);
+
+        c.setFocusable(true);
+        c.requestFocus();
+    }
+
+    class MyKeyListener extends KeyAdapter {
+        public void keyPressed(KeyEvent e) {
+            int r = (int)(Math.random() * 256);
+            int g = (int)(Math.random() * 256);
+            int b = (int)(Math.random() * 256);
+
+            switch (e.getKeyChar()) {
+                case '\n':
+                    la.setText("r=" + r + ", g=" + g + ", b=" + b);
+                    getContentPane().setBackground(new Color(r, g, b));
+                    break;
+                case 'q':
+                    System.exit(0);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new Ex96KeyCharEx();
+    }
+}
+```
+
+### 코드 분석
+
+| 코드 | 설명 |
+|---|---|
+| `e.getKeyChar() == '\n'` | Enter 키 입력 감지 |
+| `new Color(r, g, b)` | 랜덤 RGB 색상 생성 |
+| `e.getKeyChar() == 'q'` | q 키 입력 시 프로그램 종료 |
+| `setFocusable(true)` + `requestFocus()` | 키 이벤트 수신을 위한 포커스 설정 |
+
+**실행 결과**: Enter 키 → 배경색 랜덤 변경 / q 키 → 프로그램 종료
+
+---
+
+## 6. 예제 9-7: 방향키로 텍스트 이동
+
+```java
+package week13;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Ex97FlyingTextEx extends JFrame {
+
+    private JLabel la = new JLabel("HELLO");
+
+    public Ex97FlyingTextEx() {
+        super("상,하,좌,우 키를 이용하여 텍스트 움직이기");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container c = getContentPane();
+        c.setLayout(null);
+        c.addKeyListener(new MyKeyListener());
+
+        la.setLocation(50, 50);
+        la.setSize(100, 20);
+        c.add(la);
+
+        setSize(200, 200);
+        setVisible(true);
+
+        c.setFocusable(true);
+        c.requestFocus();
+    }
+
+    class MyKeyListener extends KeyAdapter {
+        public void keyPressed(KeyEvent e) {
+            int keyCode = e.getKeyCode();
+
+            switch (keyCode) {
+                case KeyEvent.VK_UP:    la.setLocation(la.getX(), la.getY() - 10); break;
+                case KeyEvent.VK_DOWN:  la.setLocation(la.getX(), la.getY() + 10); break;
+                case KeyEvent.VK_LEFT:  la.setLocation(la.getX() - 10, la.getY()); break;
+                case KeyEvent.VK_RIGHT: la.setLocation(la.getX() + 10, la.getY()); break;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new Ex97FlyingTextEx();
+    }
+}
+```
+
+### 코드 분석
+
+| 코드 | 설명 |
+|---|---|
+| `getKeyCode()` | 방향키는 문자 키가 아니므로 `getKeyChar()` 대신 사용 |
+| `VK_UP`, `VK_DOWN`, `VK_LEFT`, `VK_RIGHT` | 방향키 가상 키 상수 |
+| `la.setLocation(x, y)` | 레이블 위치를 10px씩 이동 |
+
+**실행 결과**: 방향키(↑↓←→)로 `"HELLO"` 텍스트를 10px씩 이동
+
+---
+
+## 7. Mouse 이벤트
+
+### 이벤트 종류
+
+| 이벤트 메소드 | 발생 조건 | 리스너 |
+|---|---|---|
+| `mouseEntered(e)` | 마우스가 컴포넌트 위에 올라갈 때 | MouseListener |
+| `mouseExited(e)` | 마우스가 컴포넌트에서 내려올 때 | MouseListener |
+| `mousePressed(e)` | 마우스 버튼이 눌렸을 때 | MouseListener |
+| `mouseReleased(e)` | 눌린 버튼이 떼어질 때 (항상 호출) | MouseListener |
+| `mouseClicked(e)` | 누른 위치에서 그대로 뗄 때 | MouseListener |
+| `mouseDragged(e)` | 마우스를 누른 상태로 이동하는 동안 (반복) | MouseMotionListener |
+| `mouseMoved(e)` | 마우스가 움직이는 동안 | MouseMotionListener |
+
+### 이벤트 호출 순서
+
+- **클릭 시**: `mousePressed()` → `mouseReleased()` → `mouseClicked()`
+- **드래그 시**: `mousePressed()` → `mouseDragged()` (반복) → `mouseReleased()`
+
+### MouseEvent 객체 주요 메소드
+
+| 메소드 | 설명 |
+|---|---|
+| `getX()` | 컴포넌트 내부 x 좌표 |
+| `getY()` | 컴포넌트 내부 y 좌표 |
+| `getClickCount()` | 클릭 횟수 (더블클릭 = 2) |
+| `getSource()` | 이벤트 발생 컴포넌트 객체 반환 |
+
+### 리스너 등록
+
+```java
+component.addMouseListener(myMouseListener);
+component.addMouseMotionListener(myMouseMotionListener);
+```
+
+---
+
+## 8. 예제: MouseListener + MouseMotionListener 통합
+
+```java
+package week13;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class MouseEventAllEx extends JFrame {
+
+    private JLabel la = new JLabel("Hello");
+
+    public MouseEventAllEx() {
+        setTitle("MouseListener와 MouseMotionListener 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container c = getContentPane();
+        c.setLayout(null);
+
+        MyMouseListener listener = new MyMouseListener();
+        c.addMouseListener(listener);
+        c.addMouseMotionListener(listener);
+
+        la.setSize(50, 20);
+        la.setLocation(30, 30);
+        c.add(la);
+
+        setSize(300, 300);
+        setVisible(true);
+    }
+
+    class MyMouseListener implements MouseListener, MouseMotionListener {
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            la.setLocation(e.getX(), e.getY());
+            setTitle("mousePressed(" + e.getX() + "," + e.getY() + ")");
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            la.setLocation(e.getX(), e.getY());
+            setTitle("mouseReleased(" + e.getX() + "," + e.getY() + ")");
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {}
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            Component comp = (Component) e.getSource();
+            comp.setBackground(Color.CYAN);
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            Component comp = (Component) e.getSource();
+            comp.setBackground(Color.YELLOW);
+            setTitle("mouseExited(" + e.getX() + "," + e.getY() + ")");
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            la.setLocation(e.getX(), e.getY());
+            setTitle("mouseDragged(" + e.getX() + "," + e.getY() + ")");
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            la.setLocation(e.getX(), e.getY());
+            setTitle("mouseMoved(" + e.getX() + "," + e.getY() + ")");
+        }
+    }
+
+    public static void main(String[] args) {
+        new MouseEventAllEx();
+    }
+}
+```
+
+### 동작 설명
+
+| 이벤트 | 동작 |
+|---|---|
+| `mousePressed` | Hello가 클릭 위치로 이동, 좌표 제목에 출력 |
+| `mouseReleased` | Hello가 뗀 위치로 이동, 좌표 출력 |
+| `mouseEntered` | 배경색 CYAN으로 변경 |
+| `mouseExited` | 배경색 YELLOW로 변경 |
+| `mouseDragged` | 드래그 중 Hello가 마우스를 따라다님 |
+| `mouseMoved` | 이동 중 Hello가 마우스를 따라다님 |
+
+---
+
+## 9. 자바 GUI 프로그래밍 방식 비교
+
+| 구분 | 컴포넌트 기반 GUI | 그래픽 기반 GUI |
+|---|---|---|
+| 방법 | Swing 컴포넌트 활용 | 직접 그래픽 코드로 화면 구성 |
+| 개발 난이도 | 낮음 | 높음 |
+| 자유도 | 낮음 | 높음 |
+| 주요 사용처 | 일반 애플리케이션 | 게임, 고성능 UI |
+
+---
+
+## 10. Swing 컴포넌트 계층 구조
+
+```
+Object
+  └── Component
+        └── Container
+              └── JComponent (추상)
+                    ├── AbstractButton (추상)
+                    │     ├── JButton
+                    │     ├── JToggleButton
+                    │     ├── JCheckBox
+                    │     └── JRadioButton
+                    ├── JTextComponent (추상)
+                    │     ├── JTextField
+                    │     ├── JTextArea
+                    │     └── JPasswordField
+                    ├── JLabel
+                    ├── JList
+                    ├── JComboBox
+                    ├── JSlider
+                    ├── JScrollBar
+                    ├── JMenuBar
+                    └── JPanel
+```
+
+---
+
+## 11. JComponent 공통 메소드
+
+### 모양 관련
+
+| 메소드 | 설명 |
+|---|---|
+| `setForeground(Color)` | 글자색(전경색) 설정 |
+| `setBackground(Color)` | 배경색 설정 |
+| `setOpaque(boolean)` | 불투명 여부 설정 |
+| `setFont(Font)` | 폰트 설정 |
+| `getFont()` | 현재 폰트 반환 |
+
+### 상태 관련
+
+| 메소드 | 설명 |
+|---|---|
+| `setEnabled(boolean)` | 활성화 / 비활성화 |
+| `setVisible(boolean)` | 보이기 / 숨기기 |
+| `isVisible()` | 현재 표시 상태 반환 |
+
+### 위치 · 크기 관련
+
+| 메소드 | 설명 |
+|---|---|
+| `getWidth()` / `getHeight()` | 폭 / 높이 반환 |
+| `getX()` / `getY()` | 좌표 반환 |
+| `setLocation(int, int)` | 위치 설정 |
+| `setSize(int, int)` | 크기 설정 |
+| `getLocationOnScreen()` | 화면 기준 위치 반환 |
+
+### 컨테이너 관련
+
+| 메소드 | 설명 |
+|---|---|
+| `add(Component)` | 자식 컴포넌트 추가 |
+| `remove(Component)` | 특정 컴포넌트 제거 |
+| `removeAll()` | 모든 자식 제거 |
+| `getComponents()` | 자식 컴포넌트 배열 반환 |
+| `getParent()` | 부모 컨테이너 반환 |
+
+---
+
+## 12. 예제 10-1: JComponent 공통 메소드 활용
+
+```java
+package week13;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Java10_1 extends JFrame {
+
+    public Java10_1() {
+        super("JComponent의 공통 메소드 예제");
+
+        Container c = getContentPane();
+        c.setLayout(new FlowLayout());
+
+        JButton b1 = new JButton("Magenta/Yellow Button");
+        JButton b2 = new JButton("Disabled Button");
+        JButton b3 = new JButton("getX(), getY()");
+
+        b1.setBackground(Color.YELLOW);
+        b1.setForeground(Color.MAGENTA);
+        b1.setFont(new Font("Arial", Font.ITALIC, 20));
+
+        b2.setEnabled(false);
+
+        b3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JButton b = (JButton) e.getSource();
+                setTitle(b.getX() + ", " + b.getY());
+            }
+        });
+
+        c.add(b1);
+        c.add(b2);
+        c.add(b3);
+
+        setSize(260, 200);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new Java10_1();
+    }
+}
+```
+
+### 코드 분석
+
+| 코드 | 설명 |
+|---|---|
+| `b1.setBackground(Color.YELLOW)` | 버튼 배경색 노란색 |
+| `b1.setForeground(Color.MAGENTA)` | 버튼 글자색 자홍색 |
+| `b1.setFont(new Font("Arial", Font.ITALIC, 20))` | Arial, 기울임, 크기 20 |
+| `b2.setEnabled(false)` | 버튼 비활성화 (클릭 불가) |
+| `e.getSource()` | 클릭된 버튼 객체 반환 |
+| `b.getX()`, `b.getY()` | 버튼의 좌표 반환 → 제목 표시줄 출력 |
+
+**실행 결과**
+
+- b1: 노란 배경 + 자홍 글씨 + 큰 기울임 폰트
+- b2: 회색 비활성화 버튼 (클릭 불가)
+- b3 클릭: 버튼의 x, y 좌표가 제목 표시줄에 출력
+
+---
 ## 12주차 정리 (5월 20일)
 
 ---
