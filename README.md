@@ -1,6 +1,406 @@
 # java2-class2026-dongju
 # 202430219 이동주
+## 14주차 정리 (6월 3일)
 
+---
+
+## 1. 다른 컴포넌트의 메소드
+
+JButton, JCheckBox, JRadioButton, JTextField, JTextArea, JList, JComboBox 등은 모두 JComponent를 상속받는다.
+따라서 사용하는 메소드가 JLabel과 거의 동일하며, 원하는 컴포넌트를 선택한 후 JLabel 사용법과 비슷하게 작성하면 된다.
+
+---
+
+## 2. JLabel - 텍스트와 이미지 출력
+
+문자열(Text) 또는 이미지(Image)를 화면에 출력하기 위한 컴포넌트. 사용자 입력을 받지 않고 정보 표시용으로 사용한다.
+
+### 생성자
+
+```java
+JLabel()                                 // 빈 레이블
+JLabel(Icon image)                       // 이미지 레이블
+JLabel(String text)                      // 문자열 레이블
+JLabel(String text, Icon image, int hAlign) // 문자열 + 이미지 레이블
+```
+
+### 정렬 옵션 (hAlign)
+
+- `SwingConstants.LEFT` - 왼쪽 정렬
+- `SwingConstants.RIGHT` - 오른쪽 정렬
+- `SwingConstants.CENTER` - 가운데 정렬
+
+---
+
+## 3. JButton - 버튼 만들기
+
+버튼 모양의 컴포넌트. 사용자로부터 명령을 입력받기 위해 사용하며, 버튼을 클릭하면 Action 이벤트가 발생한다.
+
+### 생성자
+
+```java
+JButton()                         // 빈 버튼
+JButton(Icon image)              // 이미지 버튼
+JButton(String text)             // 문자열 버튼
+JButton(String text, Icon image) // 문자열 + 이미지 버튼
+```
+
+---
+
+## 4. JCheckBox - 체크박스 만들기
+
+선택(selected) 또는 비선택(deselected) 상태를 가지는 컴포넌트. 사용자가 여러 항목을 선택할 수 있을 때 사용한다.
+
+### 생성자
+
+```java
+JCheckBox()
+JCheckBox(Icon image)
+JCheckBox(Icon image, boolean selected)
+JCheckBox(String text, Icon image)
+JCheckBox(String text, Icon image, boolean selected)
+```
+
+### 사용 예시
+
+```java
+JCheckBox apple = new JCheckBox("사과");
+JCheckBox pear = new JCheckBox("배", true); // 처음부터 선택된 상태
+```
+
+---
+
+## 5. JRadioButton - 라디오버튼 만들기
+
+여러 항목 중 하나만 선택 가능한 컴포넌트. ButtonGroup에 포함된 라디오버튼끼리는 동시에 하나만 선택된다.
+
+- **JRadioButton**: 라디오버튼 생성
+- **ButtonGroup**: 라디오버튼들을 하나의 그룹으로 관리
+
+### 예제 코드
+
+```java
+package week14;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class RadioButtonEx extends JFrame {
+    public RadioButtonEx() {
+        setTitle("라디오버튼 만들기 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Container c = getContentPane();
+        c.setLayout(new FlowLayout());
+
+        ButtonGroup group = new ButtonGroup();
+
+        JRadioButton apple = new JRadioButton("사과");
+        JRadioButton pear = new JRadioButton("배", true);
+        JRadioButton cherry = new JRadioButton("체리");
+
+        group.add(apple);
+        group.add(pear);
+        group.add(cherry);
+
+        c.add(apple);
+        c.add(pear);
+        c.add(cherry);
+
+        setSize(250, 150);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new RadioButtonEx();
+    }
+}
+```
+
+---
+
+## 6. JTextField - 한 줄 입력 창
+
+한 줄의 문자열을 입력받는 컴포넌트. Enter 키를 누르면 Action 이벤트가 발생한다.
+
+### 생성자
+
+```java
+JTextField()                      // 빈 텍스트필드
+JTextField(int cols)             // 열 개수 지정
+JTextField(String text)          // 초기값 설정
+JTextField(String text, int cols) // 초기값 + 열 개수
+```
+
+- **cols**: 입력창의 열(column) 개수 — 가로 크기 결정
+
+---
+
+## 7. JTextArea - 여러 줄 텍스트 영역
+
+여러 줄의 문자열을 입력받기 위한 컴포넌트. JTextField와 달리 여러 줄 입력이 가능하다.
+
+```java
+JTextArea ta = new JTextArea("hello", 7, 20); // 초기값, 7행 20열
+```
+
+스크롤바를 추가하려면 JScrollPane으로 감싼다.
+
+```java
+JScrollPane scrollPane = new JScrollPane(ta);
+```
+
+---
+
+## 8. JList<E> - 목록 컴포넌트
+
+여러 개의 아이템을 목록 형태로 보여주는 컴포넌트. Java 7부터 제네릭 사용.
+
+### 생성자
+
+```java
+JList<E>()                    // 빈 리스트
+JList<E>(Vector listData)     // Vector 데이터 이용
+JList<E>(Object[] listData)   // 배열 데이터 이용
+```
+
+### 사용 예시
+
+```java
+String[] fruits = {
+    "apple", "banana", "kiwi", "mango",
+    "pear", "peach", "berry", "strawberry", "blackberry"
+};
+JList<String> strList = new JList<String>(fruits);
+```
+
+---
+
+## 9. 메뉴아이템 Action 이벤트
+
+메뉴아이템 클릭 시 Action 이벤트가 발생하며 ActionListener 인터페이스로 처리한다.
+
+```java
+JMenuItem item = new JMenuItem("Load");
+item.addActionListener(new MenuActionListener());
+screenMenu.add(item);
+
+class MenuActionListener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+        // Load 메뉴아이템 선택 시 처리할 작업
+    }
+}
+```
+
+---
+
+## 10. JOptionPane - 팝업 다이얼로그
+
+사용자에게 메시지를 전달하거나 문자열을 간단히 입력받기 위해 사용한다. static 메소드를 사용하므로 객체 생성 없이 호출 가능하다.
+
+```java
+static String JOptionPane.showInputDialog(String msg)
+```
+
+```java
+String name = JOptionPane.showInputDialog("이름을 입력하세요.");
+```
+
+반환값:
+- 문자열 입력 후 확인: 입력한 문자열 반환
+- 취소 또는 창 닫기: `null` 반환
+
+---
+
+## 11. 자바의 입출력 스트림
+
+입출력 장치와 자바 응용 프로그램을 연결하는 객체.
+
+| 구분 | 방향 |
+|------|------|
+| 입력 스트림 | 입력 장치 → 자바 프로그램 |
+| 출력 스트림 | 자바 프로그램 → 출력 장치 |
+
+### 스트림의 특징
+
+1. 기본 단위: 바이트(Byte)
+2. 선입선출(FIFO) 구조
+3. 단방향 통신 (입력은 읽기 전용, 출력은 쓰기 전용)
+
+---
+
+## 12. 스트림의 종류
+
+| 구분 | 문자 스트림 | 바이트 스트림 |
+|------|------------|--------------|
+| 처리 데이터 | 문자만 | 문자 + 바이너리 |
+| 적용 파일 | 텍스트 파일 | 모든 파일 형식 |
+| 대표 클래스 | Reader, Writer | InputStream, OutputStream |
+
+---
+
+## 13. 바이트 스트림 클래스 계층 구조
+
+### 입력 스트림
+
+```
+InputStream
+├─ FileInputStream
+├─ FilterInputStream
+│   ├─ BufferedInputStream
+│   ├─ DataInputStream
+│   └─ PushbackInputStream
+├─ ObjectInputStream
+└─ ByteArrayInputStream
+```
+
+### 출력 스트림
+
+```
+OutputStream
+├─ FileOutputStream
+├─ FilterOutputStream
+│   ├─ BufferedOutputStream
+│   ├─ DataOutputStream
+│   └─ PrintStream
+├─ ObjectOutputStream
+└─ ByteArrayOutputStream
+```
+
+| 클래스 | 역할 |
+|--------|------|
+| FileInputStream/FileOutputStream | 파일 읽기/쓰기 |
+| BufferedInputStream/BufferedOutputStream | 버퍼를 사용한 성능 향상 |
+| ObjectInputStream/ObjectOutputStream | 객체 읽기/저장 (직렬화) |
+
+---
+
+## 14. 스트림 연결 (Stream Connection)
+
+여러 개의 스트림을 연결하여 사용할 수 있으며, 하나의 스트림이 처리한 데이터를 다른 스트림이 이어서 처리한다.
+
+```java
+InputStreamReader rd = new InputStreamReader(System.in);
+
+while(true) {
+    int c = rd.read();
+    if(c == -1) break;
+}
+```
+
+데이터 흐름: `키보드 입력 → System.in (바이트) → InputStreamReader (문자) → 자바 프로그램`
+
+---
+
+## 15. FileReader로 텍스트 파일 읽기
+
+텍스트 파일을 읽기 위해 문자 스트림인 FileReader 클래스를 사용한다.
+
+### 생성자
+
+```java
+FileReader(File file)        // File 객체 이용
+FileReader(String name)      // 파일 경로 이용
+```
+
+### 주요 메소드
+
+| 메소드 | 설명 |
+|--------|------|
+| `int read()` | 문자 1개 읽기, EOF시 -1 반환 |
+| `int read(char[] cbuf)` | 배열 크기만큼 읽기 |
+| `String getEncoding()` | 문자 인코딩 반환 |
+| `void close()` | 스트림 종료 |
+
+### 예제 코드
+
+```java
+import java.io.*;
+
+public class FileReaderEx {
+    public static void main(String[] args) {
+        FileReader in = null;
+
+        try {
+            in = new FileReader("c:\\windows\\system.ini");
+
+            int c;
+            while ((c = in.read()) != -1) {
+                System.out.print((char) c);
+            }
+
+            in.close();
+
+        } catch (IOException e) {
+            System.out.println("입출력 오류");
+        }
+    }
+}
+```
+
+---
+
+## 16. FileOutputStream으로 바이너리 파일 쓰기
+
+변수, 배열, 버퍼에 저장된 바이너리 데이터를 파일에 그대로 저장한다.
+
+```java
+// 1. 파일 출력 스트림 생성
+FileOutputStream fout = new FileOutputStream("c:\\Temp\\test.out");
+
+// 2. 파일 쓰기
+byte b[] = {7, 51, 3, 4, -1, 24};
+for(int i = 0; i < b.length; i++) {
+    fout.write(b[i]);
+}
+
+// 3. 스트림 닫기
+fout.close();
+```
+
+`write()` 메소드는 하위 1바이트를 파일에 기록한다.
+
+---
+
+## 17. 파일 입출력과 예외 처리
+
+### 발생 가능한 예외
+
+| 예외 | 발생 시점 | 원인 |
+|------|----------|------|
+| FileNotFoundException | 파일 스트림 생성 시 | 파일 경로 오류, 파일 없음 |
+| IOException | 파일 읽기/쓰기/닫기 | 디스크 오작동, 파일 손상 |
+
+상속 관계: `IOException ← FileNotFoundException`
+
+```java
+try {
+    FileReader fin = new FileReader("c:\\test.txt");
+    int c = fin.read();
+    fin.close();
+} catch(IOException e) {
+    System.out.println("입출력 오류");
+}
+```
+
+---
+
+## 시험 포인트
+
+**컴포넌트**
+- JButton, JCheckBox 등은 JComponent를 상속받음
+- JRadioButton은 ButtonGroup과 함께 사용
+- JTextField: 한 줄 입력 / JTextArea: 여러 줄 입력
+
+**스트림**
+- 문자 스트림: 텍스트 파일 전용 (Reader, Writer)
+- 바이트 스트림: 모든 파일 형식 (InputStream, OutputStream)
+- 파일 입출력: 반드시 예외 처리 필요
+
+**주요 메소드**
+- `read()`: 문자/바이트 1개 읽기, EOF시 -1 반환
+- `write()`: 바이트 1개 쓰기
+- `close()`: 스트림 종료 (필수)
 ## 13주차 정리 (5월 27일)
 
 ---
